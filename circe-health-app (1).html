@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circe Health - AI-Powered Nutrition for Women</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f7;
+            overflow-x: hidden;
+        }
+        
+        #root {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .phone-container {
+            width: 100%;
+            max-width: 390px;
+            background: white;
+            border-radius: 40px;
+            padding: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            position: relative;
+            aspect-ratio: 9/19.5;
+            overflow: hidden;
+        }
+        
+        .notch {
+            width: 140px;
+            height: 28px;
+            background: #1d1d1f;
+            border-radius: 0 0 20px 20px;
+            margin: 0 auto 10px;
+        }
+        
+        .screen-content {
+            height: calc(100% - 38px);
+            overflow-y: auto;
+            background: linear-gradient(180deg, #f8f5ff 0%, #ffffff 100%);
+            border-radius: 24px;
+            position: relative;
+        }
+        
+        .screen-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .screen-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .screen-content::-webkit-scrollbar-thumb {
+            background: #d1d1d6;
+            border-radius: 2px;
+        }
+        
+        .fade-enter {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateX(0);
+            transition: all 0.3s ease;
+        }
+        
+        button {
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Main App Component
+        function CirceHealthApp() {
+            const [currentScreen, setCurrentScreen] = useState('splash');
+            const [userData, setUserData] = useState({
+                name: '',
+                condition: '',
+                goals: [],
+                dietaryRestrictions: [],
+                cravings: [],
+                meals: [],
+                location: '',
+                ouraConnected: true,
+                cyclePhase: 'Luteal',
+                sleepScore: 72,
+                readiness: 65,
+                hrv: 48,
+                streak: 7
+            });
+
+            const updateUserData = (key, value) => {
+                setUserData(prev => ({ ...prev, [key]: value }));
+            };
+
+            const navigateTo = (screen) => {
+                setCurrentScreen(screen);
+            };
+
+            const screens = {
+                splash: <SplashScreen onNext={() => navigateTo('welcome')} />,
+                welcome: <WelcomeScreen onNext={() => navigateTo('onboarding1')} />,
+                onboarding1: <Onboarding1 userData={userData} updateUserData={updateUserData} onNext={() => navigateTo('oura')} />,
+                oura: <OuraOnboarding onConnect={() => navigateTo('onboarding2')} onSkip={() => navigateTo('onboarding2')} />,
+                onboarding2: <Onboarding2 userData={userData} updateUserData={updateUserData} onNext={() => navigateTo('onboarding3')} />,
+                onboarding3: <Onboarding3 userData={userData} updateUserData={updateUserData} onNext={() => navigateTo('loading')} />,
+                loading: <LoadingScreen onComplete={() => navigateTo('home')} />,
+                home: <HomeScreen userData={userData} onNavigate={navigateTo} />,
+                discover: <DiscoverScreen userData={userData} onBack={() => navigateTo('home')} onRestaurant={() => navigateTo('restaurant')} />,
+                restaurant: <RestaurantScreen userData={userData} onBack={() => navigateTo('discover')} onOrder={() => navigateTo('tracking')} />,
+                tracking: <TrackingScreen userData={userData} onBack={() => navigateTo('home')} />,
+                insights: <InsightsScreen userData={userData} onBack={() => navigateTo('home')} />,
+                settings: <SettingsScreen userData={userData} onBack={() => navigateTo('home')} updateUserData={updateUserData} />
+            };
+
+            return (
+                <div className="phone-container">
+                    <div className="notch"></div>
+                    <div className="screen-content">
+                        {screens[currentScreen]}
+                    </div>
+                </div>
+            );
+        }
+
+        // Splash Screen
+        function SplashScreen({ onNext }) {
+            useEffect(() => {
+                const timer = setTimeout(onNext, 2000);
+                return () => clearTimeout(timer);
+            }, []);
+
+            return (
+                <div style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    background: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
+                    padding: '40px'
+                }}>
+                    <div style={{ fontSize: '72px', marginBottom: '20px' }}>🌙</div>
+                    <h1 style={{ color: 'white', fontSize: '36px', fontWeight: '700', marginBottom: '12px' }}>Circe Health</h1>
+                    <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '16px', textAlign: 'center' }}>
+                        AI-Powered Nutrition for Women
+                    </p>
+                </div>
+            );
+        }
+
+        // Welcome Screen
+        function WelcomeScreen({ onNext }) {
+            return (
+                <div style={{ padding: '40px 24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <div style={{ fontSize: '64px', marginBottom: '24px', textAlign: 'center' }}>🌸</div>
+                        <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#1d1d1f', marginBottom: '16px', textAlign: 'center' }}>
+                            Welcome to Circe
+                        </h2>
+                        <p style={{ fontSize: '17px', color: '#6e6e73', lineHeight: '1.5', textAlign: 'center', marginBottom: '32px' }}>
+                            Your AI dietitian that understands your hormones, your cycle, and your busy life.
+                        </p>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px', marginBottom: '16px' }}>
+                                <div style={{ fontSize: '24px' }}>🍽️</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '15px', color: '#1d1d1f', marginBottom: '4px' }}>Smart Meal Recommendations</div>
+                                    <div style={{ fontSize: '14px', color: '#6e6e73', lineHeight: '1.4' }}>Personalized restaurant picks that match your health goals</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px', marginBottom: '16px' }}>
+                                <div style={{ fontSize: '24px' }}>💍</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '15px', color: '#1d1d1f', marginBottom: '4px' }}>Cycle-Synced Nutrition</div>
+                                    <div style={{ fontSize: '14px', color: '#6e6e73', lineHeight: '1.4' }}>Adapts to your menstrual phase and biometric data</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '24px' }}>📱</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '15px', color: '#1d1d1f', marginBottom: '4px' }}>Seamless Ordering</div>
+                                    <div style={{ fontSize: '14px', color: '#6e6e73', lineHeight: '1.4' }}>Order directly from your favorite apps</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onClick={onNext} style={{
+                        width: '100%',
+                        padding: '16px',
+                        background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontSize: '17px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(124,58,237,0.3)'
+                    }}>
+                        Get Started
+                    </button>
+                </div>
+            );
+        }
+
+        // Onboarding Screen 1
+        function Onboarding1({ userData, updateUserData, onNext }) {
+            const [localName, setLocalName] = useState(userData.name);
+            const [selectedCondition, setSelectedCondition] = useState(userData.condition);
+
+            const conditions = ['PCOS', 'Hypothyroidism', 'Insulin Resistance', 'Endometriosis', 'Other', 'None'];
+
+            const handleNext = () => {
+                updateUserData('name', localName);
+                updateUserData('condition', selectedCondition);
+                onNext();
+            };
+
+            return (
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                        <div style={{ height: '6px', background: '#e5e5ea', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ width: '33%', height: '100%', background: 'linear-gradient(90deg, #7c3aed, #a78bfa)', borderRadius: '3px' }}></div>
+                        </div>
+                    </div>
+                    
+                    <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#1d1d1f', marginBottom: '8px', marginTop: '24px' }}>
+                        Let's get to know you
+                    </h2>
+                    <p style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '32px' }}>
+                        Help us personalize your experience
+                    </p>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <label style={{ display: 'block', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px', fontSize: '15px' }}>
+                                What's your name?
+                            </label>
+                            <input
+                                type="text"
+                                value={localName}
+                                onChange={(e) => setLocalName(e.target.value)}
+                                placeholder="Enter your name"
+                                style={{
+                                    width: '100%',
+                                    padding: '14px',
+                                    border: '2px solid #e5e5ea',
+                                    borderRadius: '12px',
+                                    fontSize: '16px',
+                                    outline: 'none'
+                                }}
+                            />
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <label style={{ display: 'block', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px', fontSize: '15px' }}>
+                                Do you have any hormonal health conditions?
+                            </label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {conditions.map(condition => (
+                                    <button
+                                        key={condition}
+                                        onClick={() => setSelectedCondition(condition)}
+                                        style={{
+                                            padding: '14px',
+                                            border: selectedCondition === condition ? '2px solid #7c3aed' : '2px solid #e5e5ea',
+                                            borderRadius: '12px',
+                                            background: selectedCondition === condition ? '#f8f5ff' : 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            color: '#1d1d1f',
+                                            textAlign: 'left',
+                                            fontWeight: selectedCondition === condition ? '600' : '400',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {condition}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button
+                        onClick={handleNext}
+                        disabled={!localName || !selectedCondition}
+                        style={{
+                            width: '100%',
+                            padding: '16px',
+                            background: localName && selectedCondition ? 'linear-gradient(135deg, #7c3aed, #a78bfa)' : '#e5e5ea',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '17px',
+                            fontWeight: '600',
+                            cursor: localName && selectedCondition ? 'pointer' : 'not-allowed',
+                            marginTop: '20px'
+                        }}
+                    >
+                        Continue
+                    </button>
+                </div>
+            );
+        }
+
+        // Oura Onboarding Screen
+        function OuraOnboarding({ onConnect, onSkip }) {
+            return (
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#1d1d1f', marginBottom: '8px', marginTop: '24px' }}>
+                        Connect your Oura Ring
+                    </h2>
+                    <p style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '32px' }}>
+                        Get real-time nutrition that adapts to your cycle, sleep, and recovery
+                    </p>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ background: 'linear-gradient(135deg, #7c3aed, #a78bfa)', padding: '24px', borderRadius: '20px', marginBottom: '24px', textAlign: 'center' }}>
+                            <div style={{ fontSize: '72px', marginBottom: '16px' }}>💍</div>
+                            <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>Oura Ring</h3>
+                            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '14px' }}>Sync your biometric data</p>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', marginBottom: '16px', color: '#1d1d1f', fontWeight: '600' }}>
+                                What Circe uses from Oura:
+                            </h3>
+                            
+                            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>😴</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '4px' }}>Sleep Quality</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Adjust meal timing & caffeine based on sleep debt</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>⚡</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '4px' }}>Readiness & HRV</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Modify macros when recovery is low</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>🔄</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '4px' }}>Menstrual Cycle</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Sync nutrition to hormonal phases</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>🏃</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '4px' }}>Activity Level</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Increase calories on high-activity days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: '#f8f5ff', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>🔒</div>
+                                <div>
+                                    <div style={{ fontSize: '13px', color: '#1d1d1f', fontWeight: '600', marginBottom: '4px' }}>Your Privacy Matters</div>
+                                    <div style={{ fontSize: '12px', color: '#6e6e73', lineHeight: '1.4' }}>All health data is encrypted and never shared with third parties.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button onClick={onConnect} style={{
+                        width: '100%',
+                        padding: '16px',
+                        background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontSize: '17px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        marginBottom: '12px'
+                    }}>
+                        Connect Oura Ring
+                    </button>
+                    
+                    <button onClick={onSkip} style={{
+                        width: '100%',
+                        padding: '16px',
+                        background: 'transparent',
+                        color: '#6e6e73',
+                        border: 'none',
+                        fontSize: '15px',
+                        fontWeight: '500',
+                        cursor: 'pointer'
+                    }}>
+                        Skip for now
+                    </button>
+                </div>
+            );
+        }
+
+        // Onboarding Screen 2
+        function Onboarding2({ userData, updateUserData, onNext }) {
+            const [selectedGoals, setSelectedGoals] = useState(userData.goals);
+            const [selectedRestrictions, setSelectedRestrictions] = useState(userData.dietaryRestrictions);
+
+            const goals = ['Regulate blood sugar', 'Reduce inflammation', 'Support hormone balance', 'Improve energy', 'Weight management'];
+            const restrictions = ['Gluten-free', 'Dairy-free', 'Low-carb', 'Vegetarian', 'Vegan', 'Nut-free'];
+
+            const toggleGoal = (goal) => {
+                setSelectedGoals(prev => 
+                    prev.includes(goal) ? prev.filter(g => g !== goal) : [...prev, goal]
+                );
+            };
+
+            const toggleRestriction = (restriction) => {
+                setSelectedRestrictions(prev => 
+                    prev.includes(restriction) ? prev.filter(r => r !== restriction) : [...prev, restriction]
+                );
+            };
+
+            const handleNext = () => {
+                updateUserData('goals', selectedGoals);
+                updateUserData('dietaryRestrictions', selectedRestrictions);
+                onNext();
+            };
+
+            return (
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                        <div style={{ height: '6px', background: '#e5e5ea', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ width: '66%', height: '100%', background: 'linear-gradient(90deg, #7c3aed, #a78bfa)', borderRadius: '3px' }}></div>
+                        </div>
+                    </div>
+                    
+                    <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#1d1d1f', marginBottom: '8px', marginTop: '24px' }}>
+                        Your health goals
+                    </h2>
+                    <p style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '32px' }}>
+                        Select all that apply
+                    </p>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <label style={{ display: 'block', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px', fontSize: '15px' }}>
+                                What are your main goals?
+                            </label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {goals.map(goal => (
+                                    <button
+                                        key={goal}
+                                        onClick={() => toggleGoal(goal)}
+                                        style={{
+                                            padding: '14px',
+                                            border: selectedGoals.includes(goal) ? '2px solid #7c3aed' : '2px solid #e5e5ea',
+                                            borderRadius: '12px',
+                                            background: selectedGoals.includes(goal) ? '#f8f5ff' : 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            color: '#1d1d1f',
+                                            textAlign: 'left',
+                                            fontWeight: selectedGoals.includes(goal) ? '600' : '400',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {goal}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <label style={{ display: 'block', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px', fontSize: '15px' }}>
+                                Any dietary restrictions?
+                            </label>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {restrictions.map(restriction => (
+                                    <button
+                                        key={restriction}
+                                        onClick={() => toggleRestriction(restriction)}
+                                        style={{
+                                            padding: '14px',
+                                            border: selectedRestrictions.includes(restriction) ? '2px solid #7c3aed' : '2px solid #e5e5ea',
+                                            borderRadius: '12px',
+                                            background: selectedRestrictions.includes(restriction) ? '#f8f5ff' : 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            color: '#1d1d1f',
+                                            textAlign: 'left',
+                                            fontWeight: selectedRestrictions.includes(restriction) ? '600' : '400',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {restriction}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button
+                        onClick={handleNext}
+                        disabled={selectedGoals.length === 0}
+                        style={{
+                            width: '100%',
+                            padding: '16px',
+                            background: selectedGoals.length > 0 ? 'linear-gradient(135deg, #7c3aed, #a78bfa)' : '#e5e5ea',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '17px',
+                            fontWeight: '600',
+                            cursor: selectedGoals.length > 0 ? 'pointer' : 'not-allowed',
+                            marginTop: '20px'
+                        }}
+                    >
+                        Continue
+                    </button>
+                </div>
+            );
+        }
+
+        // Onboarding Screen 3
+        function Onboarding3({ userData, updateUserData, onNext }) {
+            const [selectedCravings, setSelectedCravings] = useState(userData.cravings);
+
+            const cravings = ['Sweet treats', 'Salty snacks', 'Carbs', 'Coffee', 'Chocolate', 'Fast food'];
+
+            const toggleCraving = (craving) => {
+                setSelectedCravings(prev => 
+                    prev.includes(craving) ? prev.filter(c => c !== craving) : [...prev, craving]
+                );
+            };
+
+            const handleNext = () => {
+                updateUserData('cravings', selectedCravings);
+                onNext();
+            };
+
+            return (
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ marginBottom: '8px' }}>
+                        <div style={{ height: '6px', background: '#e5e5ea', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div style={{ width: '100%', height: '100%', background: 'linear-gradient(90deg, #7c3aed, #a78bfa)', borderRadius: '3px' }}></div>
+                        </div>
+                    </div>
+                    
+                    <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#1d1d1f', marginBottom: '8px', marginTop: '24px' }}>
+                        What do you crave?
+                    </h2>
+                    <p style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '32px' }}>
+                        Help us find healthier alternatives
+                    </p>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                {cravings.map(craving => (
+                                    <button
+                                        key={craving}
+                                        onClick={() => toggleCraving(craving)}
+                                        style={{
+                                            padding: '14px',
+                                            border: selectedCravings.includes(craving) ? '2px solid #7c3aed' : '2px solid #e5e5ea',
+                                            borderRadius: '12px',
+                                            background: selectedCravings.includes(craving) ? '#f8f5ff' : 'white',
+                                            cursor: 'pointer',
+                                            fontSize: '14px',
+                                            color: '#1d1d1f',
+                                            textAlign: 'left',
+                                            fontWeight: selectedCravings.includes(craving) ? '600' : '400',
+                                            transition: 'all 0.2s'
+                                        }}
+                                    >
+                                        {craving}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '12px', marginTop: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>💡</div>
+                                <div>
+                                    <div style={{ fontSize: '13px', color: '#166534', fontWeight: '600', marginBottom: '4px' }}>
+                                        Cravings are normal!
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#15803d', lineHeight: '1.4' }}>
+                                        We'll help you find satisfying alternatives that support your health goals.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button
+                        onClick={handleNext}
+                        style={{
+                            width: '100%',
+                            padding: '16px',
+                            background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '17px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            marginTop: '20px'
+                        }}
+                    >
+                        Complete Setup
+                    </button>
+                </div>
+            );
+        }
+
+        // Loading Screen
+        function LoadingScreen({ onComplete }) {
+            const [progress, setProgress] = useState(0);
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setProgress(prev => {
+                        if (prev >= 100) {
+                            clearInterval(interval);
+                            setTimeout(onComplete, 500);
+                            return 100;
+                        }
+                        return prev + 5;
+                    });
+                }, 100);
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <div style={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: '40px'
+                }}>
+                    <div style={{ fontSize: '64px', marginBottom: '24px' }}>🧬</div>
+                    <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f', marginBottom: '12px', textAlign: 'center' }}>
+                        Creating your plan
+                    </h2>
+                    <p style={{ fontSize: '15px', color: '#6e6e73', textAlign: 'center', marginBottom: '32px' }}>
+                        Analyzing your profile and cycle data...
+                    </p>
+                    
+                    <div style={{ width: '100%', maxWidth: '280px', height: '8px', background: '#e5e5ea', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{
+                            height: '100%',
+                            width: `${progress}%`,
+                            background: 'linear-gradient(90deg, #7c3aed, #a78bfa)',
+                            borderRadius: '4px',
+                            transition: 'width 0.1s ease'
+                        }}></div>
+                    </div>
+                    
+                    <div style={{ marginTop: '24px', fontSize: '14px', color: '#6e6e73' }}>
+                        {progress}%
+                    </div>
+                </div>
+            );
+        }
+
+        // Home Screen
+        function HomeScreen({ userData, onNavigate }) {
+            return (
+                <div style={{ padding: '24px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                        <div>
+                            <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#1d1d1f', marginBottom: '4px' }}>
+                                Hey {userData.name || 'there'}! 👋
+                            </h2>
+                            <p style={{ fontSize: '15px', color: '#6e6e73' }}>
+                                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                            </p>
+                        </div>
+                        <button onClick={() => onNavigate('settings')} style={{
+                            width: '40px',
+                            height: '40px',
+                            background: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            fontSize: '20px',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}>
+                            ⚙️
+                        </button>
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
+                        {/* Oura Live Insights Card */}
+                        {userData.ouraConnected && (
+                            <div style={{
+                                background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                                padding: '20px',
+                                borderRadius: '16px',
+                                marginBottom: '20px',
+                                color: 'white'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                                    <div style={{ fontSize: '20px' }}>💍</div>
+                                    <div style={{ fontWeight: '600', fontSize: '16px' }}>Live Insights from Oura</div>
+                                </div>
+                                
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+                                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+                                        <div style={{ fontSize: '11px', opacity: 0.9, marginBottom: '4px' }}>CYCLE PHASE</div>
+                                        <div style={{ fontSize: '18px', fontWeight: '700' }}>{userData.cyclePhase}</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8', marginTop: '2px' }}>Day 23</div>
+                                    </div>
+                                    
+                                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+                                        <div style={{ fontSize: '11px', opacity: 0.9', marginBottom: '4px' }}>SLEEP SCORE</div>
+                                        <div style={{ fontSize: '18px', fontWeight: '700' }}>{userData.sleepScore}</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8', marginTop: '2px' }}>Fair</div>
+                                    </div>
+                                    
+                                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+                                        <div style={{ fontSize: '11px', opacity: 0.9', marginBottom: '4px' }}>READINESS</div>
+                                        <div style={{ fontSize: '18px', fontWeight: '700' }}>{userData.readiness}</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8', marginTop: '2px' }}>Low recovery</div>
+                                    </div>
+                                    
+                                    <div style={{ background: 'rgba(255,255,255,0.2)', padding: '12px', borderRadius: '12px', backdropFilter: 'blur(10px)' }}>
+                                        <div style={{ fontSize: '11px', opacity: 0.9', marginBottom: '4px' }}>HRV</div>
+                                        <div style={{ fontSize: '18px', fontWeight: '700' }}>{userData.hrv} ms</div>
+                                        <div style={{ fontSize: '11px', opacity: 0.8', marginTop: '2px' }}>Below avg</div>
+                                    </div>
+                                </div>
+                                
+                                <div style={{ background: 'rgba(255,255,255,0.15)', padding: '12px', borderRadius: '10px', fontSize: '13px', lineHeight: '1.4' }}>
+                                    <div style={{ fontWeight: '600', marginBottom: '4px' }}>🤖 AI Recommendation</div>
+                                    You're in luteal phase with low recovery - I've increased carbs 15% today to support energy & reduce cortisol
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Today's Plan */}
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1d1d1f', marginBottom: '16px' }}>
+                                Today's Nutrition Plan
+                            </h3>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px' }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#7c3aed', marginBottom: '4px' }}>1850</div>
+                                    <div style={{ fontSize: '12px', color: '#6e6e73' }}>Calories</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#7c3aed', marginBottom: '4px' }}>120g</div>
+                                    <div style={{ fontSize: '12px', color: '#6e6e73' }}>Protein</div>
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#7c3aed', marginBottom: '4px' }}>180g</div>
+                                    <div style={{ fontSize: '12px', color: '#6e6e73' }}>Carbs</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ background: '#f8f5ff', padding: '12px', borderRadius: '10px', fontSize: '13px', color: '#1d1d1f' }}>
+                                💡 <strong>Tip:</strong> Focus on complex carbs today to stabilize blood sugar during luteal phase
+                            </div>
+                        </div>
+                        
+                        {/* Meal Recommendations */}
+                        <div style={{ marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1d1d1f' }}>Recommended for You</h3>
+                                <button onClick={() => onNavigate('discover')} style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#7c3aed',
+                                    fontSize: '14px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer'
+                                }}>
+                                    See all →
+                                </button>
+                            </div>
+                            
+                            <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }}>
+                                {['🥗 Mediterranean Bowl', '🍜 Pho with Veggies', '🥙 Chicken Shawarma'].map((meal, idx) => (
+                                    <div key={idx} onClick={() => onNavigate('discover')} style={{
+                                        minWidth: '160px',
+                                        background: 'white',
+                                        padding: '16px',
+                                        borderRadius: '12px',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <div style={{ fontSize: '32px', marginBottom: '8px' }}>{meal.split(' ')[0]}</div>
+                                        <div style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f', marginBottom: '4px' }}>
+                                            {meal.substring(2)}
+                                        </div>
+                                        <div style={{ fontSize: '12px', color: '#6e6e73' }}>
+                                            {idx === 0 ? '520 cal' : idx === 1 ? '380 cal' : '480 cal'}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {/* Streak Card */}
+                        <div style={{
+                            background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+                            padding: '20px',
+                            borderRadius: '16px',
+                            color: 'white',
+                            marginBottom: '16px'
+                        }}>
+                            <div style={{ fontSize: '32px', marginBottom: '8px' }}>🔥</div>
+                            <div style={{ fontSize: '20px', fontWeight: '700', marginBottom: '4px' }}>
+                                {userData.streak} Day Streak!
+                            </div>
+                            <div style={{ fontSize: '14px', opacity: 0.9 }}>
+                                Keep going! You're building lasting habits.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Bottom Navigation */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: '8px',
+                        paddingTop: '16px',
+                        borderTop: '1px solid #e5e5ea'
+                    }}>
+                        <button style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', color: '#7c3aed' }}>
+                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>🏠</div>
+                            <div style={{ fontSize: '11px', fontWeight: '600' }}>Home</div>
+                        </button>
+                        <button onClick={() => onNavigate('discover')} style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', color: '#6e6e73' }}>
+                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>🔍</div>
+                            <div style={{ fontSize: '11px' }}>Discover</div>
+                        </button>
+                        <button onClick={() => onNavigate('tracking')} style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', color: '#6e6e73' }}>
+                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>📊</div>
+                            <div style={{ fontSize: '11px' }}>Track</div>
+                        </button>
+                        <button onClick={() => onNavigate('insights')} style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', color: '#6e6e73' }}>
+                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>💡</div>
+                            <div style={{ fontSize: '11px' }}>Insights</div>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Discover Screen
+        function DiscoverScreen({ userData, onBack, onRestaurant }) {
+            const [searchQuery, setSearchQuery] = useState('');
+            
+            const restaurants = [
+                { name: 'Sweetgreen', cuisine: 'Salads & Bowls', icon: '🥗', rating: 4.8, time: '15-25 min', match: 95 },
+                { name: 'Cava', cuisine: 'Mediterranean', icon: '🥙', rating: 4.7, time: '20-30 min', match: 92 },
+                { name: 'True Food Kitchen', cuisine: 'Healthy American', icon: '🍽️', rating: 4.6, time: '25-35 min', match: 90 },
+                { name: 'Mendocino Farms', cuisine: 'Sandwiches', icon: '🥪', rating: 4.5, time: '20-30 min', match: 88 }
+            ];
+
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '24px', paddingBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <button onClick={onBack} style={{
+                                background: 'white',
+                                border: 'none',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                fontSize: '20px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }}>
+                                ←
+                            </button>
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f' }}>Discover</h2>
+                        </div>
+                        
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Search restaurants or cuisines..."
+                            style={{
+                                width: '100%',
+                                padding: '14px 16px',
+                                border: '2px solid #e5e5ea',
+                                borderRadius: '12px',
+                                fontSize: '16px',
+                                outline: 'none',
+                                background: 'white'
+                            }}
+                        />
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
+                        <div style={{ marginBottom: '16px' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px' }}>
+                                Top Matches for Your Goals
+                            </h3>
+                        </div>
+                        
+                        {restaurants.map((restaurant, idx) => (
+                            <div key={idx} onClick={onRestaurant} style={{
+                                background: 'white',
+                                padding: '16px',
+                                borderRadius: '16px',
+                                marginBottom: '12px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                cursor: 'pointer'
+                            }}>
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{
+                                        width: '60px',
+                                        height: '60px',
+                                        background: '#f8f5ff',
+                                        borderRadius: '12px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: '32px'
+                                    }}>
+                                        {restaurant.icon}
+                                    </div>
+                                    
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '4px' }}>
+                                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1d1d1f' }}>
+                                                {restaurant.name}
+                                            </h4>
+                                            <div style={{
+                                                background: '#dcfce7',
+                                                color: '#166534',
+                                                padding: '4px 10px',
+                                                borderRadius: '8px',
+                                                fontSize: '12px',
+                                                fontWeight: '600'
+                                            }}>
+                                                {restaurant.match}% match
+                                            </div>
+                                        </div>
+                                        
+                                        <div style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '8px' }}>
+                                            {restaurant.cuisine}
+                                        </div>
+                                        
+                                        <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: '#6e6e73' }}>
+                                            <span>⭐ {restaurant.rating}</span>
+                                            <span>🕐 {restaurant.time}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Restaurant Screen
+        function RestaurantScreen({ userData, onBack, onOrder }) {
+            const [selectedMeal, setSelectedMeal] = useState(null);
+
+            const meals = [
+                { name: 'Mediterranean Bowl', price: 12.95, calories: 520, protein: 32, carbs: 48, fat: 18, icon: '🥗' },
+                { name: 'Grilled Salmon Salad', price: 14.95, calories: 420, protein: 38, carbs: 24, fat: 22, icon: '🐟' },
+                { name: 'Quinoa Power Bowl', price: 11.95, calories: 480, protein: 28, carbs: 52, fat: 16, icon: '🥙' }
+            ];
+
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '24px', paddingBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <button onClick={onBack} style={{
+                                background: 'white',
+                                border: 'none',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                fontSize: '20px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }}>
+                                ←
+                            </button>
+                            <div>
+                                <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1d1d1f', marginBottom: '2px' }}>
+                                    Sweetgreen
+                                </h2>
+                                <div style={{ fontSize: '13px', color: '#6e6e73' }}>
+                                    Salads & Bowls • 95% match
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
+                        <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '12px', marginBottom: '20px' }}>
+                            <div style={{ fontSize: '13px', color: '#166534', fontWeight: '600', marginBottom: '4px' }}>
+                                ✓ Perfectly aligned with your goals
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#15803d', lineHeight: '1.4' }}>
+                                High protein, anti-inflammatory ingredients, blood sugar friendly
+                            </div>
+                        </div>
+                        
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', color: '#1d1d1f', marginBottom: '12px' }}>
+                            Circe Recommends
+                        </h3>
+                        
+                        {meals.map((meal, idx) => (
+                            <div
+                                key={idx}
+                                onClick={() => setSelectedMeal(meal)}
+                                style={{
+                                    background: 'white',
+                                    padding: '16px',
+                                    borderRadius: '16px',
+                                    marginBottom: '12px',
+                                    border: selectedMeal?.name === meal.name ? '2px solid #7c3aed' : '2px solid transparent',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <div style={{ display: 'flex', gap: '16px' }}>
+                                    <div style={{ fontSize: '48px' }}>{meal.icon}</div>
+                                    
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1d1d1f' }}>
+                                                {meal.name}
+                                            </h4>
+                                            <div style={{ fontSize: '16px', fontWeight: '600', color: '#1d1d1f' }}>
+                                                ${meal.price}
+                                            </div>
+                                        </div>
+                                        
+                                        <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: '#6e6e73', marginBottom: '8px' }}>
+                                            <span>{meal.calories} cal</span>
+                                            <span>•</span>
+                                            <span>{meal.protein}g protein</span>
+                                            <span>•</span>
+                                            <span>{meal.carbs}g carbs</span>
+                                        </div>
+                                        
+                                        {idx === 0 && (
+                                            <div style={{
+                                                background: '#f8f5ff',
+                                                padding: '8px',
+                                                borderRadius: '8px',
+                                                fontSize: '11px',
+                                                color: '#7c3aed',
+                                                fontWeight: '600'
+                                            }}>
+                                                🤖 Best for your luteal phase - balanced carbs & protein
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    {selectedMeal && (
+                        <div style={{
+                            padding: '16px 24px',
+                            background: 'white',
+                            borderTop: '1px solid #e5e5ea'
+                        }}>
+                            <button onClick={onOrder} style={{
+                                width: '100%',
+                                padding: '16px',
+                                background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '12px',
+                                fontSize: '17px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}>
+                                Order on DoorDash - ${selectedMeal.price}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // Tracking Screen
+        function TrackingScreen({ userData, onBack }) {
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '24px', paddingBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <button onClick={onBack} style={{
+                                background: 'white',
+                                border: 'none',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                fontSize: '20px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }}>
+                                ←
+                            </button>
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f' }}>Today's Progress</h2>
+                        </div>
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
+                        <div style={{ background: 'white', padding: '24px', borderRadius: '16px', marginBottom: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1d1d1f', marginBottom: '20px' }}>
+                                Macros
+                            </h3>
+                            
+                            <div style={{ marginBottom: '24px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '14px', color: '#6e6e73' }}>Calories</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f' }}>1250 / 1850</span>
+                                </div>
+                                <div style={{ height: '8px', background: '#e5e5ea', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ width: '68%', height: '100%', background: 'linear-gradient(90deg, #7c3aed, #a78bfa)', borderRadius: '4px' }}></div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '24px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '14px', color: '#6e6e73' }}>Protein</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f' }}>75g / 120g</span>
+                                </div>
+                                <div style={{ height: '8px', background: '#e5e5ea', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ width: '62%', height: '100%', background: 'linear-gradient(90deg, #10b981, #34d399)', borderRadius: '4px' }}></div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '24px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                    <span style={{ fontSize: '14px', color: '#6e6e73' }}>Carbs</span>
+                                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f' }}>110g / 180g</span>
+                                </div>
+                                <div style={{ height: '8px', background: '#e5e5ea', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <div style={{ width: '61%', height: '100%', background: 'linear-gradient(90deg, #f59e0b, #fbbf24)', borderRadius: '4px' }}></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#1d1d1f', marginBottom: '16px' }}>
+                                Today's Meals
+                            </h3>
+                            
+                            <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f5f5f7' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                    <div style={{ fontSize: '15px', fontWeight: '600', color: '#1d1d1f' }}>Mediterranean Bowl</div>
+                                    <div style={{ fontSize: '14px', color: '#6e6e73' }}>520 cal</div>
+                                </div>
+                                <div style={{ fontSize: '13px', color: '#6e6e73' }}>Lunch • Sweetgreen</div>
+                            </div>
+                            
+                            <button style={{
+                                width: '100%',
+                                padding: '14px',
+                                background: '#f8f5ff',
+                                color: '#7c3aed',
+                                border: '2px dashed #7c3aed',
+                                borderRadius: '12px',
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                cursor: 'pointer'
+                            }}>
+                                + Log a meal
+                            </button>
+                        </div>
+                        
+                        <div style={{ background: '#f0fdf4', padding: '16px', borderRadius: '12px' }}>
+                            <div style={{ fontSize: '13px', color: '#166534', fontWeight: '600', marginBottom: '4px' }}>
+                                ✓ Great progress today!
+                            </div>
+                            <div style={{ fontSize: '12px', color: '#15803d', lineHeight: '1.4' }}>
+                                You're on track with your protein goals and staying within your calorie target.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Insights Screen
+        function InsightsScreen({ userData, onBack }) {
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '24px', paddingBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <button onClick={onBack} style={{
+                                background: 'white',
+                                border: 'none',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                fontSize: '20px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }}>
+                                ←
+                            </button>
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f' }}>Insights</h2>
+                        </div>
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f', marginBottom: '12px' }}>
+                                Weekly Summary
+                            </h3>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <div style={{ fontSize: '14px', color: '#6e6e73', marginBottom: '4px' }}>Average Calories</div>
+                                <div style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f' }}>1,720 / day</div>
+                            </div>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>Protein</div>
+                                    <div style={{ fontSize: '18px', fontWeight: '600', color: '#10b981' }}>105g avg</div>
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>Meals logged</div>
+                                    <div style={{ fontSize: '18px', fontWeight: '600', color: '#7c3aed' }}>18 / 21</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f', marginBottom: '12px' }}>
+                                Cycle Insights
+                            </h3>
+                            
+                            <div style={{ background: '#f8f5ff', padding: '14px', borderRadius: '10px', marginBottom: '12px' }}>
+                                <div style={{ fontSize: '13px', fontWeight: '600', color: '#7c3aed', marginBottom: '4px' }}>
+                                    Luteal Phase (Day 23)
+                                </div>
+                                <div style={{ fontSize: '12px', color: '#6e6e73', lineHeight: '1.4' }}>
+                                    Your body needs more complex carbs right now. Focus on sweet potatoes, quinoa, and oats.
+                                </div>
+                            </div>
+                            
+                            <div style={{ fontSize: '12px', color: '#6e6e73', lineHeight: '1.6' }}>
+                                Based on your Oura data, we've noticed better sleep quality when you eat dinner before 7pm during this phase.
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f', marginBottom: '12px' }}>
+                                Your Favorite Restaurants
+                            </h3>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {['Sweetgreen', 'Cava', 'True Food Kitchen'].map((restaurant, idx) => (
+                                    <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <div>
+                                            <div style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f' }}>
+                                                {restaurant}
+                                            </div>
+                                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>
+                                                {idx === 0 ? '8 orders' : idx === 1 ? '5 orders' : '3 orders'}
+                                            </div>
+                                        </div>
+                                        <div style={{ fontSize: '20px' }}>
+                                            {idx === 0 ? '🥗' : idx === 1 ? '🥙' : '🍽️'}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Settings Screen
+        function SettingsScreen({ userData, onBack, updateUserData }) {
+            return (
+                <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ padding: '24px', paddingBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                            <button onClick={onBack} style={{
+                                background: 'white',
+                                border: 'none',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                fontSize: '20px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            }}>
+                                ←
+                            </button>
+                            <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#1d1d1f' }}>Settings</h2>
+                        </div>
+                    </div>
+                    
+                    <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px 24px' }}>
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f', marginBottom: '16px' }}>
+                                Connected Devices
+                            </h3>
+                            
+                            <div style={{
+                                background: 'linear-gradient(135deg, #7c3aed, #a78bfa)',
+                                padding: '16px',
+                                borderRadius: '12px',
+                                marginBottom: '12px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: 'white' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div style={{
+                                            width: '48px',
+                                            height: '48px',
+                                            background: 'rgba(255,255,255,0.2)',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '24px',
+                                            backdropFilter: 'blur(10px)'
+                                        }}>💍</div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', fontSize: '15px' }}>Oura Ring</div>
+                                            <div style={{ fontSize: '12px', opacity: 0.9 }}>Connected • Synced 2 min ago</div>
+                                        </div>
+                                    </div>
+                                    <div style={{ fontSize: '20px' }}>✓</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{
+                                background: 'white',
+                                border: '2px dashed #e5e5ea',
+                                padding: '16px',
+                                borderRadius: '12px',
+                                marginBottom: '12px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div style={{
+                                            width: '48px',
+                                            height: '48px',
+                                            background: '#f5f5f7',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '24px'
+                                        }}>⌚</div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', fontSize: '15px', color: '#1d1d1f' }}>Apple Health</div>
+                                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Not connected</div>
+                                        </div>
+                                    </div>
+                                    <button style={{
+                                        padding: '8px 16px',
+                                        background: '#7c3aed',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}>Connect</button>
+                                </div>
+                            </div>
+                            
+                            <div style={{
+                                background: 'white',
+                                border: '2px dashed #e5e5ea',
+                                padding: '16px',
+                                borderRadius: '12px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div style={{
+                                            width: '48px',
+                                            height: '48px',
+                                            background: '#f5f5f7',
+                                            borderRadius: '50%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '24px'
+                                        }}>💪</div>
+                                        <div>
+                                            <div style={{ fontWeight: '600', fontSize: '15px', color: '#1d1d1f' }}>Whoop</div>
+                                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Not connected</div>
+                                        </div>
+                                    </div>
+                                    <button style={{
+                                        padding: '8px 16px',
+                                        background: '#7c3aed',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '13px',
+                                        fontWeight: '600',
+                                        cursor: 'pointer'
+                                    }}>Connect</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: 'white', padding: '20px', borderRadius: '16px', marginBottom: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                            <h3 style={{ fontSize: '16px', marginBottom: '12px', color: '#1d1d1f', fontWeight: '600' }}>
+                                What Circe Uses From Oura
+                            </h3>
+                            
+                            <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'start', gap: '10px' }}>
+                                <div style={{ fontSize: '16px' }}>😴</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '2px' }}>Sleep Quality</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Adjust meal timing & caffeine based on sleep debt</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'start', gap: '10px' }}>
+                                <div style={{ fontSize: '16px' }}>⚡</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '2px' }}>Readiness & HRV</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Modify macros when recovery is low</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'start', gap: '10px' }}>
+                                <div style={{ fontSize: '16px' }}>🔄</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '2px' }}>Menstrual Cycle</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Sync nutrition to hormonal phases (follicular/luteal)</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '10px' }}>
+                                <div style={{ fontSize: '16px' }}>🏃</div>
+                                <div>
+                                    <div style={{ fontWeight: '600', fontSize: '14px', color: '#1d1d1f', marginBottom: '2px' }}>Activity Level</div>
+                                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: '1.4' }}>Increase calories on high-activity days</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style={{ background: '#f8f5ff', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
+                                <div style={{ fontSize: '20px' }}>🔒</div>
+                                <div>
+                                    <div style={{ fontSize: '13px', color: '#1d1d1f', fontWeight: '600', marginBottom: '4px' }}>Your Privacy Matters</div>
+                                    <div style={{ fontSize: '12px', color: '#6e6e73', lineHeight: '1.4' }}>All health data is encrypted and never shared with third parties. You can disconnect anytime.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button style={{
+                            width: '100%',
+                            padding: '12px',
+                            background: 'white',
+                            border: '1px solid #dc2626',
+                            borderRadius: '10px',
+                            color: '#dc2626',
+                            fontWeight: '600',
+                            fontSize: '14px',
+                            cursor: 'pointer'
+                        }}>
+                            Disconnect Oura Ring
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Render the app
+        ReactDOM.render(<CirceHealthApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
