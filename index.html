@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circe Health - AI-Powered Nutrition for Women</title>
+    <title>Circe Nutrition</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -24,15 +24,15 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background: #F7F5F2;
         }
         
         .serif {
-            font-family: 'Cormorant', serif;
+            font-family: 'Crimson Pro', serif;
         }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         
         ::-webkit-scrollbar-track {
@@ -40,25 +40,92 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: #D4C5B9;
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #B8A599;
+            background: #4A4845;
+            border-radius: 0;
         }
 
-        /* Smooth transitions */
-        * {
-            transition: all 0.2s ease;
+        .loading-spinner {
+            border: 1px solid #E8E6E1;
+            border-top: 1px solid #252423;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .ingredient-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid #D4D0C8;
+            font-size: 9px;
+            color: #4A4845;
+            margin: 3px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .divider {
+            height: 1px;
+            background: #D4D0C8;
+            margin: 24px 0;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #252423;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .logo-mark::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 20px;
+            border: 1px solid #252423;
+            border-radius: 50% 0;
+            transform: rotate(-45deg);
+        }
+
+        .logo-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 22px;
+            font-weight: 500;
+            color: #252423;
+            letter-spacing: 1px;
         }
 
         button {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
         }
 
         button:active {
-            transform: scale(0.98);
+            transform: translateY(1px);
         }
     </style>
     <script>
@@ -66,45 +133,23 @@
             theme: {
                 extend: {
                     colors: {
-                        sand: {
-                            50: '#FAF8F6',
-                            100: '#F5F2EE',
-                            200: '#EDE7E0',
-                            300: '#E0D5CA',
-                            400: '#D4C5B9',
-                            500: '#B8A599',
-                            600: '#9A8577',
+                        aesop: {
+                            cream: '#F7F5F2',
+                            sand: '#E8E6E1',
+                            stone: '#D4D0C8',
+                            taupe: '#A8A49D',
+                            brown: '#6B6760',
+                            charcoal: '#4A4845',
+                            black: '#252423',
                         },
-                        sage: {
-                            50: '#F6F7F6',
-                            100: '#E8EBE8',
-                            200: '#D4DAD4',
-                            300: '#A8B5A8',
-                            400: '#7D8F7D',
-                            500: '#5C6F5C',
-                        },
-                        clay: {
-                            50: '#FAF6F4',
-                            100: '#F2E9E4',
-                            200: '#E8D5CC',
-                            300: '#D4B5A8',
-                            400: '#B89684',
-                            500: '#9D7760',
-                        },
-                        charcoal: {
-                            50: '#F7F7F7',
-                            100: '#E3E3E3',
-                            200: '#C8C8C8',
-                            300: '#A4A4A4',
-                            400: '#717171',
-                            500: '#4A4A4A',
-                            600: '#2D2D2D',
-                            700: '#1A1A1A',
+                        accent: {
+                            olive: '#8B8B70',
+                            sage: '#9C9B8E',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        serif: ['Cormorant', 'serif'],
+                        serif: ['Crimson Pro', 'serif'],
                     }
                 }
             }
@@ -117,315 +162,681 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Minimal Icon Components
-        const ChevronLeft = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-        );
-
+        // Professional Icons from Lucide
         const Home = () => (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
         );
 
         const Search = () => (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
             </svg>
         );
 
         const BarChart = () => (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="20" x2="12" y2="10"/>
+                <line x1="18" y1="20" x2="18" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="16"/>
             </svg>
         );
 
         const Sparkles = () => (
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <path d="M12 3v18M3 12h18M6.5 6.5l11 11M6.5 17.5l11-11"></path>
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
             </svg>
         );
 
-        const Settings = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 1v6m0 6v6M4.93 4.93l4.24 4.24m5.66 5.66l4.24 4.24M1 12h6m6 0h6M4.93 19.07l4.24-4.24m5.66-5.66l4.24-4.24"></path>
+        const ChevronRight = () => (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
             </svg>
         );
 
-        function CirceHealthApp() {
+        const ChevronLeft = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        );
+
+        const X = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        );
+
+        const Plus = () => (
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        );
+
+        const Moon = () => (
+            <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        );
+
+        const Activity = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+        );
+
+        const Heart = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        );
+
+        const Watch = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="7"/>
+                <polyline points="12 9 12 12 13.5 13.5"/>
+                <path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"/>
+            </svg>
+        );
+
+        const Utensils = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+                <path d="M7 2v20"/>
+                <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+            </svg>
+        );
+
+        const TrendingUp = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+            </svg>
+        );
+
+        const Calendar = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+        );
+
+        const Lock = () => (
+            <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        );
+
+        // Logo Component
+        const Logo = ({ size = 'normal' }) => {
+            const scale = size === 'large' ? 1.8 : 1;
+            return (
+                <div className="logo-container" style={{ transform: `scale(${scale})` }}>
+                    <div className="logo-mark"></div>
+                    <div className="logo-text">CIRCE</div>
+                </div>
+            );
+        };
+
+        // Restaurant Menu Database
+        const RESTAURANT_MENUS = {
+            'Sweetgreen': {
+                cuisine: 'Salads & Bowls',
+                description: 'Farm-to-table salads and warm bowls',
+                doordashId: 'sweetgreen',
+                items: [
+                    {
+                        name: 'Harvest Bowl',
+                        price: 13.95,
+                        calories: 520,
+                        protein: 18,
+                        carbs: 68,
+                        fat: 20,
+                        fiber: 12,
+                        sugar: 15,
+                        sodium: 680,
+                        ingredients: ['Warm quinoa', 'Roasted chicken', 'Roasted sweet potato', 'Apples', 'Goat cheese', 'Almonds', 'Balsamic vinaigrette'],
+                        allergens: ['Dairy', 'Tree Nuts'],
+                        healthScore: 88,
+                        recommended: true,
+                        category: 'Warm Bowls'
+                    },
+                    {
+                        name: 'Kale Caesar',
+                        price: 11.95,
+                        calories: 480,
+                        protein: 22,
+                        carbs: 42,
+                        fat: 24,
+                        fiber: 8,
+                        sugar: 6,
+                        sodium: 890,
+                        ingredients: ['Kale', 'Shaved parmesan', 'Sourdough breadcrumbs', 'Lime squeeze', 'Caesar dressing'],
+                        allergens: ['Dairy', 'Gluten'],
+                        healthScore: 75,
+                        recommended: false,
+                        category: 'Salads'
+                    },
+                    {
+                        name: 'Fish Taco Bowl',
+                        price: 14.95,
+                        calories: 590,
+                        protein: 32,
+                        carbs: 55,
+                        fat: 26,
+                        fiber: 10,
+                        sugar: 8,
+                        sodium: 750,
+                        ingredients: ['Blackened fish', 'Cilantro lime rice', 'Cabbage', 'Pickled onions', 'Avocado', 'Lime cilantro jalapeño vinaigrette'],
+                        allergens: ['Fish'],
+                        healthScore: 82,
+                        recommended: true,
+                        category: 'Warm Bowls'
+                    }
+                ]
+            },
+            'CAVA': {
+                cuisine: 'Mediterranean',
+                description: 'Mediterranean bowls and pitas',
+                doordashId: 'cava',
+                items: [
+                    {
+                        name: 'Crazy Feta Bowl',
+                        price: 12.50,
+                        calories: 640,
+                        protein: 28,
+                        carbs: 62,
+                        fat: 30,
+                        fiber: 11,
+                        sugar: 10,
+                        sodium: 920,
+                        ingredients: ['Greens', 'Brown rice', 'Grilled chicken', 'Hummus', 'Feta', 'Cucumber', 'Tomato', 'Crazy feta dressing'],
+                        allergens: ['Dairy', 'Sesame'],
+                        healthScore: 84,
+                        recommended: true,
+                        category: 'Bowls'
+                    },
+                    {
+                        name: 'Spicy Lamb Meatballs Bowl',
+                        price: 13.95,
+                        calories: 720,
+                        protein: 35,
+                        carbs: 58,
+                        fat: 38,
+                        fiber: 9,
+                        sugar: 11,
+                        sodium: 1050,
+                        ingredients: ['Saffron basmati rice', 'Lamb meatballs', 'Harissa', 'Hummus', 'Pickled onions', 'Cucumber', 'Tomato'],
+                        allergens: ['Sesame'],
+                        healthScore: 76,
+                        recommended: false,
+                        category: 'Bowls'
+                    }
+                ]
+            },
+            'Chipotle': {
+                cuisine: 'Mexican',
+                description: 'Fresh Mexican-inspired bowls and burritos',
+                doordashId: 'chipotle',
+                items: [
+                    {
+                        name: 'Chicken Bowl',
+                        price: 10.95,
+                        calories: 630,
+                        protein: 48,
+                        carbs: 52,
+                        fat: 24,
+                        fiber: 14,
+                        sugar: 6,
+                        sodium: 1420,
+                        ingredients: ['Brown rice', 'Chicken', 'Black beans', 'Fajita veggies', 'Tomato salsa', 'Lettuce'],
+                        allergens: [],
+                        healthScore: 80,
+                        recommended: true,
+                        category: 'Bowls'
+                    },
+                    {
+                        name: 'Steak Burrito Bowl',
+                        price: 12.95,
+                        calories: 710,
+                        protein: 42,
+                        carbs: 68,
+                        fat: 28,
+                        fiber: 16,
+                        sugar: 7,
+                        sodium: 1580,
+                        ingredients: ['Cilantro-lime rice', 'Steak', 'Pinto beans', 'Cheese', 'Sour cream', 'Guacamole'],
+                        allergens: ['Dairy'],
+                        healthScore: 72,
+                        recommended: false,
+                        category: 'Bowls'
+                    }
+                ]
+            },
+            'Tender Greens': {
+                cuisine: 'Farm-to-table',
+                description: 'Seasonal plates and salads',
+                doordashId: 'tender-greens',
+                items: [
+                    {
+                        name: 'Backyard Steak Salad',
+                        price: 15.95,
+                        calories: 580,
+                        protein: 38,
+                        carbs: 32,
+                        fat: 32,
+                        fiber: 8,
+                        sugar: 12,
+                        sodium: 820,
+                        ingredients: ['Mixed greens', 'Grilled steak', 'Tomatoes', 'Corn', 'Cotija cheese', 'Avocado', 'Chipotle vinaigrette'],
+                        allergens: ['Dairy'],
+                        healthScore: 85,
+                        recommended: true,
+                        category: 'Salads'
+                    },
+                    {
+                        name: 'Salt & Pepper Chicken Plate',
+                        price: 14.50,
+                        calories: 620,
+                        protein: 45,
+                        carbs: 48,
+                        fat: 26,
+                        fiber: 6,
+                        sugar: 8,
+                        sodium: 980,
+                        ingredients: ['Grilled chicken', 'Quinoa', 'Roasted vegetables', 'Herb sauce'],
+                        allergens: [],
+                        healthScore: 87,
+                        recommended: true,
+                        category: 'Plates'
+                    }
+                ]
+            }
+        };
+
+        // Main App Component
+        function CirceNutritionApp() {
             const [currentScreen, setCurrentScreen] = useState('splash');
-            const [userData, setUserData] = useState({
-                name: '',
-                condition: '',
-                goals: [],
-                dietaryRestrictions: [],
-                cravings: [],
-                ouraConnected: true,
-                cyclePhase: 'Luteal',
-                sleepScore: 72,
-                readiness: 65,
-                hrv: 48,
-                streak: 7
+            const [userProfile, setUserProfile] = useState({});
+            const [surveyStep, setSurveyStep] = useState(0);
+            const [location, setLocation] = useState(null);
+            const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+            const [selectedMeal, setSelectedMeal] = useState(null);
+            const [expandedMeal, setExpandedMeal] = useState(null);
+            const [trackedMeals, setTrackedMeals] = useState([]);
+            const [dailyStats, setDailyStats] = useState({
+                calories: 0,
+                protein: 0,
+                carbs: 0,
+                fat: 0,
+                target: { calories: 1800, protein: 120, carbs: 180, fat: 60 }
             });
 
-            const updateUserData = (key, value) => {
-                setUserData(prev => ({ ...prev, [key]: value }));
+            // Get user's location
+            const getUserLocation = () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const loc = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                                city: 'Your Area'
+                            };
+                            setLocation(loc);
+                            setCurrentScreen('onboarding');
+                        },
+                        (error) => {
+                            setLocation({ lat: 37.7749, lng: -122.4194, city: 'San Francisco' });
+                            setCurrentScreen('onboarding');
+                        }
+                    );
+                } else {
+                    setLocation({ lat: 37.7749, lng: -122.4194, city: 'San Francisco' });
+                    setCurrentScreen('onboarding');
+                }
             };
 
-            const navigateTo = (screen) => {
-                setCurrentScreen(screen);
-                window.scrollTo(0, 0);
+            const openDoorDash = (restaurantName, itemName) => {
+                const restaurant = RESTAURANT_MENUS[restaurantName];
+                if (restaurant && restaurant.doordashId) {
+                    const doordashUrl = `https://www.doordash.com/store/${restaurant.doordashId}`;
+                    window.open(doordashUrl, '_blank');
+                }
             };
+
+            // Onboarding Survey Questions
+            const surveyQuestions = [
+                {
+                    question: "What is your primary health objective?",
+                    options: [
+                        { label: 'Hormonal balance', value: 'hormones' },
+                        { label: 'Energy optimization', value: 'energy' },
+                        { label: 'Weight management', value: 'weight' },
+                        { label: 'Athletic performance', value: 'performance' },
+                        { label: 'General wellness', value: 'wellness' }
+                    ],
+                    field: 'healthGoal'
+                },
+                {
+                    question: "Do you have any diagnosed health conditions?",
+                    options: [
+                        { label: 'PCOS', value: 'pcos' },
+                        { label: 'Endometriosis', value: 'endo' },
+                        { label: 'Thyroid condition', value: 'thyroid' },
+                        { label: 'Insulin resistance', value: 'insulin' },
+                        { label: 'None', value: 'none' }
+                    ],
+                    field: 'conditions',
+                    multiple: true
+                },
+                {
+                    question: "What is your current activity level?",
+                    options: [
+                        { label: 'Sedentary', value: 'sedentary' },
+                        { label: 'Light activity', value: 'light' },
+                        { label: 'Moderate activity', value: 'moderate' },
+                        { label: 'Active', value: 'active' },
+                        { label: 'Very active', value: 'very_active' }
+                    ],
+                    field: 'activityLevel'
+                },
+                {
+                    question: "Do you have dietary preferences or restrictions?",
+                    options: [
+                        { label: 'No restrictions', value: 'none' },
+                        { label: 'Vegetarian', value: 'vegetarian' },
+                        { label: 'Vegan', value: 'vegan' },
+                        { label: 'Gluten-free', value: 'gluten_free' },
+                        { label: 'Dairy-free', value: 'dairy_free' }
+                    ],
+                    field: 'dietPreferences',
+                    multiple: true
+                },
+                {
+                    question: "Would you like cycle-synced nutrition tracking?",
+                    options: [
+                        { label: 'Yes, enable this feature', value: 'yes' },
+                        { label: 'No, skip this feature', value: 'no' }
+                    ],
+                    field: 'cycleTracking'
+                }
+            ];
+
+            const handleSurveyAnswer = (field, value, multiple = false) => {
+                if (multiple) {
+                    const current = userProfile[field] || [];
+                    const updated = current.includes(value)
+                        ? current.filter(v => v !== value)
+                        : [...current, value];
+                    setUserProfile({ ...userProfile, [field]: updated });
+                } else {
+                    setUserProfile({ ...userProfile, [field]: value });
+                }
+            };
+
+            const nextSurveyStep = () => {
+                if (surveyStep < surveyQuestions.length - 1) {
+                    setSurveyStep(surveyStep + 1);
+                } else {
+                    setCurrentScreen('wearable');
+                }
+            };
+
+            const skipToHome = () => {
+                setCurrentScreen('home');
+            };
+
+            // Update daily stats when meals are tracked
+            useEffect(() => {
+                const stats = trackedMeals.reduce((acc, meal) => ({
+                    calories: acc.calories + meal.calories,
+                    protein: acc.protein + meal.protein,
+                    carbs: acc.carbs + meal.carbs,
+                    fat: acc.fat + meal.fat
+                }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+                
+                setDailyStats({ ...dailyStats, ...stats });
+            }, [trackedMeals]);
 
             // Splash Screen
-            const SplashScreen = () => {
-                useEffect(() => {
-                    const timer = setTimeout(() => navigateTo('welcome'), 2500);
-                    return () => clearTimeout(timer);
-                }, []);
-
-                return (
-                    <div className="h-screen flex flex-col justify-center items-center bg-sand-50 p-10">
-                        <div className="mb-8">
-                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                                <circle cx="30" cy="30" r="28" stroke="#9D7760" strokeWidth="1.5"/>
-                                <path d="M30 15C30 15 22 22 22 30C22 35 25 40 30 40C35 40 38 35 38 30C38 22 30 15 30 15Z" 
-                                      fill="#D4B5A8" stroke="#9D7760" strokeWidth="1.5"/>
-                            </svg>
+            const SplashScreen = () => (
+                <div className="min-h-screen bg-aesop-cream flex flex-col items-center justify-center p-8">
+                    <div className="text-center space-y-12 max-w-md mx-auto fade-in">
+                        <div className="flex justify-center mb-8">
+                            <Logo size="large" />
                         </div>
-                        <h1 className="text-charcoal-700 text-4xl font-serif font-light tracking-wide mb-2">Circe</h1>
-                        <p className="text-charcoal-400 text-sm font-light tracking-widest uppercase">Health</p>
+                        <p className="text-aesop-brown text-xs tracking-widest uppercase" style={{ letterSpacing: '3px', fontWeight: '400' }}>
+                            Eat Well, Your Way
+                        </p>
+                        <button
+                            onClick={getUserLocation}
+                            className="w-full bg-aesop-black text-white py-4 px-8 text-xs uppercase tracking-widest hover:bg-aesop-charcoal transition-all border border-aesop-black"
+                            style={{ letterSpacing: '3px', fontWeight: '500' }}
+                        >
+                            Begin
+                        </button>
+                        <p className="text-xs text-aesop-taupe tracking-widest uppercase" style={{ letterSpacing: '2px' }}>
+                            Personalized · Flexible · Precise
+                        </p>
                     </div>
-                );
-            };
-
-            // Welcome Screen
-            const WelcomeScreen = () => (
-                <div className="min-h-screen bg-sand-50 p-8 flex flex-col">
-                    <div className="flex-1 flex flex-col justify-center max-w-md mx-auto w-full">
-                        <div className="mb-12 text-center">
-                            <svg width="48" height="48" viewBox="0 0 60 60" fill="none" className="mx-auto mb-6">
-                                <circle cx="30" cy="30" r="28" stroke="#9D7760" strokeWidth="1.5"/>
-                                <path d="M30 15C30 15 22 22 22 30C22 35 25 40 30 40C35 40 38 35 38 30C38 22 30 15 30 15Z" 
-                                      fill="#D4B5A8" stroke="#9D7760" strokeWidth="1.5"/>
-                            </svg>
-                            <h2 className="text-4xl font-serif font-light text-charcoal-700 mb-4 tracking-wide">
-                                Welcome to Circe
-                            </h2>
-                            <p className="text-charcoal-400 text-base font-light leading-relaxed max-w-sm mx-auto">
-                                Personalized nutrition that adapts to your body's natural rhythms
-                            </p>
-                        </div>
-                        
-                        <div className="space-y-8 mb-12">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-sage-100 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-sage-500 text-lg">◉</span>
-                                </div>
-                                <div>
-                                    <div className="font-medium text-charcoal-600 mb-1 text-sm">Intuitive Recommendations</div>
-                                    <div className="text-sm text-charcoal-400 font-light leading-relaxed">
-                                        AI-curated meals that honor your health goals
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-clay-100 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-clay-500 text-lg">◉</span>
-                                </div>
-                                <div>
-                                    <div className="font-medium text-charcoal-600 mb-1 text-sm">Cycle-Aware Nutrition</div>
-                                    <div className="text-sm text-charcoal-400 font-light leading-relaxed">
-                                        Adapts to your hormonal phases and biometrics
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-full bg-sand-200 flex items-center justify-center flex-shrink-0">
-                                    <span className="text-sand-600 text-lg">◉</span>
-                                </div>
-                                <div>
-                                    <div className="font-medium text-charcoal-600 mb-1 text-sm">Effortless Integration</div>
-                                    <div className="text-sm text-charcoal-400 font-light leading-relaxed">
-                                        Seamlessly order from your favorite places
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button
-                        onClick={() => navigateTo('onboarding1')}
-                        className="w-full max-w-md mx-auto bg-charcoal-600 text-white py-4 rounded-full font-light text-base tracking-wide hover:bg-charcoal-700"
-                    >
-                        Begin Your Journey
-                    </button>
                 </div>
             );
 
-            // Onboarding Screen 1
-            const Onboarding1 = () => {
-                const [localName, setLocalName] = useState(userData.name);
-                const [selectedCondition, setSelectedCondition] = useState(userData.condition);
-                const conditions = ['PCOS', 'Hypothyroidism', 'Insulin Resistance', 'Endometriosis', 'Other', 'None'];
-
-                const handleNext = () => {
-                    updateUserData('name', localName);
-                    updateUserData('condition', selectedCondition);
-                    navigateTo('oura');
-                };
+            // Onboarding Survey Screen
+            const OnboardingScreen = () => {
+                const currentQuestion = surveyQuestions[surveyStep];
+                const progress = ((surveyStep + 1) / surveyQuestions.length) * 100;
 
                 return (
-                    <div className="min-h-screen bg-sand-50 p-8">
-                        <div className="max-w-md mx-auto">
-                            <div className="h-px bg-sand-300 mb-12 relative">
-                                <div className="absolute top-0 left-0 h-px bg-charcoal-600 w-1/3"></div>
-                            </div>
-                            
-                            <h2 className="text-3xl font-serif font-light text-charcoal-700 mb-3 tracking-wide">
-                                Getting to know you
-                            </h2>
-                            <p className="text-charcoal-400 font-light mb-12">Share a few details to personalize your experience</p>
-                            
-                            <div className="space-y-8">
-                                <div>
-                                    <label className="block text-charcoal-600 mb-3 text-sm font-light tracking-wide">Your Name</label>
-                                    <input
-                                        type="text"
-                                        value={localName}
-                                        onChange={(e) => setLocalName(e.target.value)}
-                                        placeholder="Enter your name"
-                                        className="w-full px-0 py-3 border-b border-sand-300 bg-transparent text-base focus:outline-none focus:border-charcoal-600 placeholder-charcoal-300 font-light"
+                    <div className="min-h-screen bg-aesop-cream pb-24">
+                        <div className="max-w-2xl mx-auto p-8">
+                            {/* Progress Bar */}
+                            <div className="mb-12">
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '2px', fontWeight: '500' }}>
+                                        Question {surveyStep + 1} of {surveyQuestions.length}
+                                    </span>
+                                    <span className="text-xs text-aesop-black tracking-widest uppercase" style={{ letterSpacing: '2px', fontWeight: '600' }}>
+                                        {Math.round(progress)}%
+                                    </span>
+                                </div>
+                                <div className="h-px bg-aesop-stone overflow-hidden">
+                                    <div 
+                                        className="h-full bg-aesop-black transition-all duration-700"
+                                        style={{ width: `${progress}%` }}
                                     />
                                 </div>
+                            </div>
+
+                            {/* Question */}
+                            <div className="bg-white border border-aesop-sand p-10 mb-8">
+                                <h2 className="text-2xl font-serif text-aesop-black mb-10 tracking-tight leading-tight" style={{ lineHeight: '1.3' }}>
+                                    {currentQuestion.question}
+                                </h2>
                                 
-                                <div>
-                                    <label className="block text-charcoal-600 mb-4 text-sm font-light tracking-wide">
-                                        Hormonal Health
-                                    </label>
-                                    <div className="space-y-2">
-                                        {conditions.map(condition => (
+                                <div className="space-y-2">
+                                    {currentQuestion.options.map((option, idx) => {
+                                        const isSelected = currentQuestion.multiple
+                                            ? (userProfile[currentQuestion.field] || []).includes(option.value)
+                                            : userProfile[currentQuestion.field] === option.value;
+                                        
+                                        return (
                                             <button
-                                                key={condition}
-                                                onClick={() => setSelectedCondition(condition)}
-                                                className={`w-full px-5 py-3 rounded-full text-left text-sm font-light transition-all ${
-                                                    selectedCondition === condition
-                                                        ? 'bg-charcoal-600 text-white'
-                                                        : 'bg-white text-charcoal-600 hover:bg-sand-100 border border-sand-200'
+                                                key={idx}
+                                                onClick={() => handleSurveyAnswer(
+                                                    currentQuestion.field, 
+                                                    option.value, 
+                                                    currentQuestion.multiple
+                                                )}
+                                                className={`w-full p-4 border text-left transition-all ${
+                                                    isSelected
+                                                        ? 'border-aesop-black bg-aesop-black text-white'
+                                                        : 'border-aesop-stone bg-white text-aesop-charcoal hover:border-aesop-charcoal'
                                                 }`}
                                             >
-                                                {condition}
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-xs tracking-widest uppercase" style={{ letterSpacing: '1.5px', fontWeight: '400' }}>
+                                                        {option.label}
+                                                    </span>
+                                                    {isSelected && (
+                                                        <span className="text-white text-sm">✓</span>
+                                                    )}
+                                                </div>
                                             </button>
-                                        ))}
-                                    </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                            
-                            <button
-                                onClick={handleNext}
-                                disabled={!localName || !selectedCondition}
-                                className={`w-full mt-12 py-4 rounded-full font-light text-base tracking-wide transition-all ${
-                                    localName && selectedCondition
-                                        ? 'bg-charcoal-600 text-white hover:bg-charcoal-700'
-                                        : 'bg-sand-200 text-sand-400 cursor-not-allowed'
-                                }`}
-                            >
-                                Continue
-                            </button>
+
+                            {/* Navigation */}
+                            <div className="flex gap-4">
+                                {surveyStep > 0 && (
+                                    <button
+                                        onClick={() => setSurveyStep(surveyStep - 1)}
+                                        className="px-8 py-4 border border-aesop-stone text-aesop-charcoal text-xs uppercase tracking-widest hover:border-aesop-black"
+                                        style={{ letterSpacing: '2px', fontWeight: '500' }}
+                                    >
+                                        Back
+                                    </button>
+                                )}
+                                <button
+                                    onClick={nextSurveyStep}
+                                    disabled={!userProfile[currentQuestion.field]}
+                                    className="flex-1 bg-aesop-black text-white py-4 px-8 text-xs uppercase tracking-widest hover:bg-aesop-charcoal disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                    style={{ letterSpacing: '2px', fontWeight: '500' }}
+                                >
+                                    {surveyStep < surveyQuestions.length - 1 ? 'Continue' : 'Complete'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 );
             };
 
-            // Oura Onboarding
-            const OuraOnboarding = () => (
-                <div className="min-h-screen bg-sand-50 p-8">
-                    <div className="max-w-md mx-auto">
-                        <h2 className="text-3xl font-serif font-light text-charcoal-700 mb-3 mt-6 tracking-wide">
-                            Sync Your Rhythm
-                        </h2>
-                        <p className="text-charcoal-400 font-light mb-12 leading-relaxed">
-                            Connect your Oura Ring for nutrition that adapts to your cycle, sleep, and recovery
-                        </p>
-                        
-                        <div className="bg-white rounded-3xl p-8 text-center mb-8 border border-sand-200">
-                            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-sand-100 flex items-center justify-center">
-                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                                    <circle cx="20" cy="20" r="15" stroke="#9D7760" strokeWidth="1.5"/>
-                                    <circle cx="20" cy="20" r="10" stroke="#9D7760" strokeWidth="1.5"/>
-                                </svg>
-                            </div>
-                            <h3 className="text-charcoal-700 text-xl font-serif font-light mb-2">Oura Ring</h3>
-                            <p className="text-charcoal-400 text-sm font-light">Biometric synchronization</p>
-                        </div>
-                        
-                        <div className="space-y-6 mb-8">
-                            <div className="flex items-start gap-4">
-                                <div className="text-clay-400 text-sm mt-0.5">—</div>
-                                <div>
-                                    <div className="text-charcoal-600 text-sm mb-1 font-light">Sleep Quality</div>
-                                    <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                        Optimize meal timing based on your rest
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-start gap-4">
-                                <div className="text-sage-400 text-sm mt-0.5">—</div>
-                                <div>
-                                    <div className="text-charcoal-600 text-sm mb-1 font-light">Readiness & HRV</div>
-                                    <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                        Adjust nutrition when recovery is needed
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-start gap-4">
-                                <div className="text-sand-500 text-sm mt-0.5">—</div>
-                                <div>
-                                    <div className="text-charcoal-600 text-sm mb-1 font-light">Menstrual Cycle</div>
-                                    <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                        Sync nutrition to your hormonal phases
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex items-start gap-4">
-                                <div className="text-charcoal-300 text-sm mt-0.5">—</div>
-                                <div>
-                                    <div className="text-charcoal-600 text-sm mb-1 font-light">Activity Level</div>
-                                    <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                        Increase fuel on active days
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-sage-50 rounded-2xl p-5 mb-8 border border-sage-100">
-                            <div className="text-xs text-sage-600 font-light leading-relaxed">
-                                Your data is encrypted and private. We never share your information with third parties.
-                            </div>
-                        </div>
-                        
+            // Wearable Connection Screen
+            const WearableScreen = () => (
+                <div className="min-h-screen bg-aesop-cream p-8 pb-24">
+                    <div className="max-w-2xl mx-auto">
                         <button
-                            onClick={() => navigateTo('onboarding2')}
-                            className="w-full bg-charcoal-600 text-white py-4 rounded-full font-light text-base tracking-wide hover:bg-charcoal-700 mb-3"
+                            onClick={() => setCurrentScreen('onboarding')}
+                            className="mb-8 text-aesop-charcoal hover:text-aesop-black"
                         >
-                            Connect Oura Ring
+                            <ChevronLeft />
                         </button>
-                        
+
+                        <div className="mb-12">
+                            <div className="mb-6">
+                                <Watch />
+                            </div>
+                            <h2 className="text-3xl font-serif text-aesop-black mb-4 tracking-tight">
+                                Device Integration
+                            </h2>
+                            <p className="text-aesop-brown text-sm tracking-wide leading-relaxed" style={{ letterSpacing: '0.3px' }}>
+                                Connect wearable devices to enable personalized, data-driven nutrition recommendations.
+                            </p>
+                        </div>
+
+                        <div className="space-y-3 mb-10">
+                            {/* Oura Ring */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 border border-aesop-black flex items-center justify-center">
+                                            <Activity />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xs tracking-widest text-aesop-black uppercase mb-1" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                Oura Ring
+                                            </h3>
+                                            <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                Sleep, HRV, cycle data
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={skipToHome}
+                                        className="px-6 py-3 bg-aesop-black text-white text-xs uppercase tracking-widest"
+                                        style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                                    >
+                                        Connect
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Apple Health */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 border border-aesop-stone flex items-center justify-center">
+                                            <Heart />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xs tracking-widest text-aesop-black uppercase mb-1" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                Apple Health
+                                            </h3>
+                                            <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                Activity, workouts, vitals
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button className="px-6 py-3 border border-aesop-stone text-aesop-charcoal text-xs uppercase tracking-widest hover:border-aesop-black" style={{ letterSpacing: '1.5px', fontWeight: '500' }}>
+                                        Connect
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Whoop */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-5">
+                                        <div className="w-12 h-12 border border-aesop-stone flex items-center justify-center">
+                                            <TrendingUp />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xs tracking-widest text-aesop-black uppercase mb-1" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                Whoop
+                                            </h3>
+                                            <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                Recovery, strain, sleep
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button className="px-6 py-3 border border-aesop-stone text-aesop-charcoal text-xs uppercase tracking-widest hover:border-aesop-black" style={{ letterSpacing: '1.5px', fontWeight: '500' }}>
+                                        Connect
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Privacy Notice */}
+                        <div className="bg-aesop-sand border border-aesop-stone p-6 mb-8">
+                            <div className="flex gap-4">
+                                <div className="flex-shrink-0">
+                                    <Lock />
+                                </div>
+                                <div>
+                                    <h4 className="text-aesop-black text-xs mb-2 uppercase tracking-widest" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                        Privacy & Security
+                                    </h4>
+                                    <p className="text-xs text-aesop-brown leading-relaxed tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                        All health data is encrypted end-to-end and never shared with third parties. 
+                                        You maintain complete control and can disconnect at any time.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <button
-                            onClick={() => navigateTo('onboarding2')}
-                            className="w-full text-charcoal-400 py-3 text-center text-sm font-light"
+                            onClick={skipToHome}
+                            className="w-full py-4 text-aesop-taupe text-xs uppercase tracking-widest hover:text-aesop-black"
+                            style={{ letterSpacing: '2px' }}
                         >
                             Skip for now
                         </button>
@@ -433,780 +844,864 @@
                 </div>
             );
 
-            // Onboarding Screen 2
-            const Onboarding2 = () => {
-                const [selectedGoals, setSelectedGoals] = useState(userData.goals);
-                const [selectedRestrictions, setSelectedRestrictions] = useState(userData.dietaryRestrictions);
-                
-                const goals = ['Regulate blood sugar', 'Reduce inflammation', 'Support hormone balance', 'Improve energy', 'Weight management'];
-                const restrictions = ['Gluten-free', 'Dairy-free', 'Low-carb', 'Vegetarian', 'Vegan', 'Nut-free'];
-
-                const toggleGoal = (goal) => {
-                    setSelectedGoals(prev => 
-                        prev.includes(goal) ? prev.filter(g => g !== goal) : [...prev, goal]
-                    );
-                };
-
-                const toggleRestriction = (restriction) => {
-                    setSelectedRestrictions(prev => 
-                        prev.includes(restriction) ? prev.filter(r => r !== restriction) : [...prev, restriction]
-                    );
-                };
-
-                const handleNext = () => {
-                    updateUserData('goals', selectedGoals);
-                    updateUserData('dietaryRestrictions', selectedRestrictions);
-                    navigateTo('onboarding3');
-                };
-
-                return (
-                    <div className="min-h-screen bg-sand-50 p-8">
-                        <div className="max-w-md mx-auto">
-                            <div className="h-px bg-sand-300 mb-12 relative">
-                                <div className="absolute top-0 left-0 h-px bg-charcoal-600 w-2/3"></div>
-                            </div>
-                            
-                            <h2 className="text-3xl font-serif font-light text-charcoal-700 mb-3 tracking-wide">
-                                Your Intentions
-                            </h2>
-                            <p className="text-charcoal-400 font-light mb-12">Select what resonates with you</p>
-                            
-                            <div className="space-y-8">
-                                <div>
-                                    <label className="block text-charcoal-600 mb-4 text-sm font-light tracking-wide">Health Goals</label>
-                                    <div className="space-y-2">
-                                        {goals.map(goal => (
-                                            <button
-                                                key={goal}
-                                                onClick={() => toggleGoal(goal)}
-                                                className={`w-full px-5 py-3 rounded-full text-left text-sm font-light transition-all ${
-                                                    selectedGoals.includes(goal)
-                                                        ? 'bg-charcoal-600 text-white'
-                                                        : 'bg-white text-charcoal-600 hover:bg-sand-100 border border-sand-200'
-                                                }`}
-                                            >
-                                                {goal}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <label className="block text-charcoal-600 mb-4 text-sm font-light tracking-wide">Dietary Preferences</label>
-                                    <div className="space-y-2">
-                                        {restrictions.map(restriction => (
-                                            <button
-                                                key={restriction}
-                                                onClick={() => toggleRestriction(restriction)}
-                                                className={`w-full px-5 py-3 rounded-full text-left text-sm font-light transition-all ${
-                                                    selectedRestrictions.includes(restriction)
-                                                        ? 'bg-charcoal-600 text-white'
-                                                        : 'bg-white text-charcoal-600 hover:bg-sand-100 border border-sand-200'
-                                                }`}
-                                            >
-                                                {restriction}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button
-                                onClick={handleNext}
-                                disabled={selectedGoals.length === 0}
-                                className={`w-full mt-12 py-4 rounded-full font-light text-base tracking-wide transition-all ${
-                                    selectedGoals.length > 0
-                                        ? 'bg-charcoal-600 text-white hover:bg-charcoal-700'
-                                        : 'bg-sand-200 text-sand-400 cursor-not-allowed'
-                                }`}
-                            >
-                                Continue
-                            </button>
-                        </div>
-                    </div>
-                );
-            };
-
-            // Onboarding Screen 3
-            const Onboarding3 = () => {
-                const [selectedCravings, setSelectedCravings] = useState(userData.cravings);
-                const cravings = ['Sweet treats', 'Salty snacks', 'Carbs', 'Coffee', 'Chocolate', 'Fast food'];
-
-                const toggleCraving = (craving) => {
-                    setSelectedCravings(prev => 
-                        prev.includes(craving) ? prev.filter(c => c !== craving) : [...prev, craving]
-                    );
-                };
-
-                const handleNext = () => {
-                    updateUserData('cravings', selectedCravings);
-                    navigateTo('loading');
-                };
-
-                return (
-                    <div className="min-h-screen bg-sand-50 p-8">
-                        <div className="max-w-md mx-auto">
-                            <div className="h-px bg-sand-300 mb-12 relative">
-                                <div className="absolute top-0 left-0 h-px bg-charcoal-600 w-full"></div>
-                            </div>
-                            
-                            <h2 className="text-3xl font-serif font-light text-charcoal-700 mb-3 tracking-wide">
-                                Your Cravings
-                            </h2>
-                            <p className="text-charcoal-400 font-light mb-12 leading-relaxed">
-                                Help us find balanced alternatives that satisfy
-                            </p>
-                            
-                            <div className="space-y-2 mb-8">
-                                {cravings.map(craving => (
-                                    <button
-                                        key={craving}
-                                        onClick={() => toggleCraving(craving)}
-                                        className={`w-full px-5 py-3 rounded-full text-left text-sm font-light transition-all ${
-                                            selectedCravings.includes(craving)
-                                                ? 'bg-charcoal-600 text-white'
-                                                : 'bg-white text-charcoal-600 hover:bg-sand-100 border border-sand-200'
-                                        }`}
-                                    >
-                                        {craving}
-                                    </button>
-                                ))}
-                            </div>
-                            
-                            <div className="bg-sage-50 rounded-2xl p-5 mb-12 border border-sage-100">
-                                <div className="text-xs text-sage-600 font-light leading-relaxed">
-                                    Cravings are natural. We'll help you find nourishing options that feel indulgent.
-                                </div>
-                            </div>
-                            
-                            <button
-                                onClick={handleNext}
-                                className="w-full bg-charcoal-600 text-white py-4 rounded-full font-light text-base tracking-wide hover:bg-charcoal-700"
-                            >
-                                Complete Setup
-                            </button>
-                        </div>
-                    </div>
-                );
-            };
-
-            // Loading Screen
-            const LoadingScreen = () => {
-                const [progress, setProgress] = useState(0);
-
-                useEffect(() => {
-                    const interval = setInterval(() => {
-                        setProgress(prev => {
-                            if (prev >= 100) {
-                                clearInterval(interval);
-                                setTimeout(() => navigateTo('home'), 500);
-                                return 100;
-                            }
-                            return prev + 5;
-                        });
-                    }, 100);
-                    return () => clearInterval(interval);
-                }, []);
-
-                return (
-                    <div className="h-screen flex flex-col justify-center items-center bg-sand-50 p-10">
-                        <div className="mb-8">
-                            <svg width="48" height="48" viewBox="0 0 60 60" fill="none" className="animate-pulse">
-                                <circle cx="30" cy="30" r="28" stroke="#9D7760" strokeWidth="1.5"/>
-                                <path d="M30 15C30 15 22 22 22 30C22 35 25 40 30 40C35 40 38 35 38 30C38 22 30 15 30 15Z" 
-                                      fill="#D4B5A8" stroke="#9D7760" strokeWidth="1.5"/>
-                            </svg>
-                        </div>
-                        <h2 className="text-2xl font-serif font-light text-charcoal-700 mb-3 tracking-wide">
-                            Crafting Your Plan
-                        </h2>
-                        <p className="text-charcoal-400 font-light text-center mb-10 text-sm">
-                            Analyzing your profile and biometric data
-                        </p>
-                        
-                        <div className="w-full max-w-xs h-px bg-sand-200 overflow-hidden relative">
-                            <div
-                                className="absolute top-0 left-0 h-px bg-charcoal-600 transition-all duration-100"
-                                style={{ width: `${progress}%` }}
-                            ></div>
-                        </div>
-                        
-                        <div className="mt-6 text-xs text-charcoal-400 font-light tracking-widest">{progress}%</div>
-                    </div>
-                );
-            };
-
-            // Home Screen
+            // Home Dashboard Screen
             const HomeScreen = () => (
-                <div className="min-h-screen bg-sand-50">
-                    <div className="p-6 max-w-2xl mx-auto pb-28">
-                        <div className="flex justify-between items-start mb-10 pt-4">
-                            <div>
-                                <h2 className="text-2xl font-serif font-light text-charcoal-700 mb-1 tracking-wide">
-                                    {userData.name || 'Welcome'}
-                                </h2>
-                                <p className="text-charcoal-400 text-sm font-light">
-                                    {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                <div className="min-h-screen bg-aesop-cream pb-24">
+                    <div className="max-w-2xl mx-auto">
+                        {/* Header */}
+                        <div className="bg-aesop-black text-white p-8 border-b border-aesop-charcoal">
+                            <div className="flex justify-between items-start mb-8">
+                                <div>
+                                    <p className="text-aesop-stone text-xs tracking-widest uppercase mb-2" style={{ letterSpacing: '2px' }}>
+                                        Good Morning
+                                    </p>
+                                    <h1 className="text-2xl font-serif tracking-tight">Today's Plan</h1>
+                                </div>
+                                <Logo />
+                            </div>
+
+                            {/* Quick Stats */}
+                            <div className="grid grid-cols-4 gap-3">
+                                <div className="border border-aesop-charcoal bg-aesop-black p-4 text-center">
+                                    <div className="text-xl font-serif mb-1">
+                                        {dailyStats.calories}
+                                    </div>
+                                    <div className="text-xs text-aesop-stone tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        kcal
+                                    </div>
+                                    <div className="text-xs text-aesop-taupe mt-1">
+                                        / {dailyStats.target.calories}
+                                    </div>
+                                </div>
+                                <div className="border border-aesop-charcoal bg-aesop-black p-4 text-center">
+                                    <div className="text-xl font-serif mb-1">
+                                        {dailyStats.protein}
+                                    </div>
+                                    <div className="text-xs text-aesop-stone tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        protein
+                                    </div>
+                                </div>
+                                <div className="border border-aesop-charcoal bg-aesop-black p-4 text-center">
+                                    <div className="text-xl font-serif mb-1">
+                                        {dailyStats.carbs}
+                                    </div>
+                                    <div className="text-xs text-aesop-stone tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        carbs
+                                    </div>
+                                </div>
+                                <div className="border border-aesop-charcoal bg-aesop-black p-4 text-center">
+                                    <div className="text-xl font-serif mb-1">
+                                        {dailyStats.fat}
+                                    </div>
+                                    <div className="text-xs text-aesop-stone tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        fat
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Today's Insights */}
+                        <div className="p-8 space-y-4">
+                            <h2 className="text-lg font-serif text-aesop-black mb-6 tracking-tight">Today's Insights</h2>
+                            
+                            {/* Cycle Phase Insight */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-start gap-4 mb-4">
+                                    <div className="flex-shrink-0">
+                                        <Calendar />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xs tracking-widest uppercase text-aesop-black mb-2" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Follicular Phase · Day 8
+                                        </h3>
+                                        <p className="text-xs text-aesop-brown leading-relaxed tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                            Energy levels are naturally elevated. Optimal time for protein-rich meals 
+                                            and higher-intensity physical activity.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2 text-xs">
+                                    <span className="px-3 py-2 border border-aesop-stone text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        High Energy
+                                    </span>
+                                    <span className="px-3 py-2 border border-aesop-stone text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                        Fast Metabolism
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Sleep Recovery */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <Activity />
+                                        <h3 className="text-xs tracking-widest uppercase text-aesop-black" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Sleep Score
+                                        </h3>
+                                    </div>
+                                    <span className="text-xl font-serif text-aesop-black">82</span>
+                                </div>
+                                <p className="text-xs text-aesop-brown mb-4 tracking-wide leading-relaxed" style={{ letterSpacing: '0.3px' }}>
+                                    Recovery is optimal. Body is prepared for balanced nutritional intake.
                                 </p>
-                            </div>
-                            <button
-                                onClick={() => navigateTo('settings')}
-                                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
-                            >
-                                <Settings />
-                            </button>
-                        </div>
-                        
-                        {userData.ouraConnected && (
-                            <div className="bg-white rounded-3xl p-6 mb-6 border border-sand-200">
-                                <div className="flex items-center gap-2 mb-6">
-                                    <svg width="20" height="20" viewBox="0 0 40 40" fill="none">
-                                        <circle cx="20" cy="20" r="15" stroke="#9D7760" strokeWidth="1.5"/>
-                                        <circle cx="20" cy="20" r="10" stroke="#9D7760" strokeWidth="1.5"/>
-                                    </svg>
-                                    <div className="text-sm font-light text-charcoal-600">Oura Insights</div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-4 mb-6">
-                                    <div className="bg-sand-50 rounded-2xl p-4 border border-sand-100">
-                                        <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">Cycle Phase</div>
-                                        <div className="text-2xl font-serif font-light text-charcoal-700 mb-1">{userData.cyclePhase}</div>
-                                        <div className="text-xs text-charcoal-400 font-light">Day 23</div>
-                                    </div>
-                                    
-                                    <div className="bg-sand-50 rounded-2xl p-4 border border-sand-100">
-                                        <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">Sleep</div>
-                                        <div className="text-2xl font-serif font-light text-charcoal-700 mb-1">{userData.sleepScore}</div>
-                                        <div className="text-xs text-charcoal-400 font-light">Fair quality</div>
-                                    </div>
-                                    
-                                    <div className="bg-sand-50 rounded-2xl p-4 border border-sand-100">
-                                        <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">Readiness</div>
-                                        <div className="text-2xl font-serif font-light text-charcoal-700 mb-1">{userData.readiness}</div>
-                                        <div className="text-xs text-charcoal-400 font-light">Low recovery</div>
-                                    </div>
-                                    
-                                    <div className="bg-sand-50 rounded-2xl p-4 border border-sand-100">
-                                        <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">HRV</div>
-                                        <div className="text-2xl font-serif font-light text-charcoal-700 mb-1">{userData.hrv}</div>
-                                        <div className="text-xs text-charcoal-400 font-light">Below avg</div>
-                                    </div>
-                                </div>
-                                
-                                <div className="bg-sage-50 rounded-2xl p-4 text-xs text-sage-600 font-light leading-relaxed border border-sage-100">
-                                    You're in luteal phase with low recovery—I've increased carbs by 15% today to support energy and reduce cortisol
+                                <div className="h-px bg-aesop-sand overflow-hidden">
+                                    <div className="h-full bg-accent-olive" style={{ width: '82%' }} />
                                 </div>
                             </div>
-                        )}
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-6 border border-sand-200">
-                            <h3 className="text-lg font-serif font-light text-charcoal-700 mb-6 tracking-wide">Today's Plan</h3>
-                            
-                            <div className="grid grid-cols-3 gap-4 mb-6">
-                                <div className="text-center">
-                                    <div className="text-3xl font-serif font-light text-clay-500 mb-1">1850</div>
-                                    <div className="text-xs text-charcoal-400 font-light uppercase tracking-wider">Calories</div>
+
+                            {/* HRV & Readiness */}
+                            <div className="bg-white border border-aesop-sand p-6">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <TrendingUp />
+                                    <div className="flex-1">
+                                        <h3 className="text-xs tracking-widest uppercase text-aesop-black mb-2" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Readiness: 85%
+                                        </h3>
+                                        <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                            HRV: 68ms · Resting HR: 58 bpm
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-serif font-light text-sage-500 mb-1">120g</div>
-                                    <div className="text-xs text-charcoal-400 font-light uppercase tracking-wider">Protein</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className="text-3xl font-serif font-light text-sand-500 mb-1">180g</div>
-                                    <div className="text-xs text-charcoal-400 font-light uppercase tracking-wider">Carbs</div>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-sand-50 rounded-2xl p-4 text-xs text-charcoal-500 font-light leading-relaxed border border-sand-100">
-                                Focus on complex carbs today to stabilize blood sugar during luteal phase
                             </div>
                         </div>
-                        
-                        <div className="mb-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-serif font-light text-charcoal-700 tracking-wide">For You</h3>
+
+                        <div className="divider mx-8"></div>
+
+                        {/* Meal Recommendations */}
+                        <div className="p-8">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-lg font-serif text-aesop-black tracking-tight">
+                                    Recommended
+                                </h2>
                                 <button 
-                                    onClick={() => navigateTo('discover')} 
-                                    className="text-charcoal-400 text-sm font-light hover:text-charcoal-600"
+                                    onClick={() => setCurrentScreen('restaurants')}
+                                    className="text-aesop-charcoal text-xs uppercase tracking-widest hover:text-aesop-black"
+                                    style={{ letterSpacing: '1.5px', fontWeight: '500' }}
                                 >
-                                    View all
+                                    View All
                                 </button>
                             </div>
-                            
-                            <div className="flex gap-3 overflow-x-auto pb-2">
-                                {[
-                                    { name: 'Mediterranean Bowl', cal: '520 cal', img: '🥗' },
-                                    { name: 'Pho with Veggies', cal: '380 cal', img: '🍜' },
-                                    { name: 'Chicken Shawarma', cal: '480 cal', img: '🥙' }
-                                ].map((meal, idx) => (
-                                    <div
-                                        key={idx}
-                                        onClick={() => navigateTo('discover')}
-                                        className="min-w-[160px] bg-white rounded-2xl p-4 cursor-pointer hover:bg-sand-50 border border-sand-200 transition-all"
-                                    >
-                                        <div className="text-4xl mb-3">{meal.img}</div>
-                                        <div className="text-charcoal-600 text-sm mb-1 font-light">{meal.name}</div>
-                                        <div className="text-xs text-charcoal-400 font-light">{meal.cal}</div>
-                                    </div>
-                                ))}
+
+                            <div className="space-y-3">
+                                {Object.keys(RESTAURANT_MENUS).slice(0, 3).map(restName => {
+                                    const restaurant = RESTAURANT_MENUS[restName];
+                                    const topMeal = restaurant.items.find(item => item.recommended) || restaurant.items[0];
+                                    
+                                    return (
+                                        <div 
+                                            key={restName}
+                                            onClick={() => {
+                                                setSelectedRestaurant({ name: restName, ...restaurant });
+                                                setCurrentScreen('restaurant');
+                                            }}
+                                            className="bg-white border border-aesop-sand p-5 hover:border-aesop-charcoal transition-all cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-5">
+                                                <div className="w-16 h-16 border border-aesop-sand flex items-center justify-center flex-shrink-0">
+                                                    <Utensils />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xs tracking-widest uppercase text-aesop-black mb-2" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                        {restName}
+                                                    </h3>
+                                                    <p className="text-xs text-aesop-taupe mb-3 tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                                        {topMeal.name} · {topMeal.calories} cal
+                                                    </p>
+                                                    <div className="flex items-center gap-2 text-xs">
+                                                        <span className="px-2 py-1 border border-aesop-stone text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                            Score {topMeal.healthScore}
+                                                        </span>
+                                                        {topMeal.recommended && (
+                                                            <span className="text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                · Recommended
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <ChevronRight />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                        
-                        <div className="bg-gradient-to-br from-clay-200 to-clay-300 rounded-3xl p-6 text-charcoal-700 border border-clay-300">
-                            <div className="text-3xl mb-3">✦</div>
-                            <div className="text-2xl font-serif font-light mb-2 tracking-wide">{userData.streak} Day Streak</div>
-                            <div className="text-sm font-light text-charcoal-600">You're building lasting rituals</div>
-                        </div>
                     </div>
-                    
-                    <BottomNav current="home" onNavigate={navigateTo} />
                 </div>
             );
 
-            // Discover Screen
-            const DiscoverScreen = () => {
-                const [searchQuery, setSearchQuery] = useState('');
-                
-                const restaurants = [
-                    { name: 'Sweetgreen', cuisine: 'Salads & Bowls', match: 95 },
-                    { name: 'Cava', cuisine: 'Mediterranean', match: 92 },
-                    { name: 'True Food Kitchen', cuisine: 'Healthy American', match: 90 },
-                    { name: 'Mendocino Farms', cuisine: 'Sandwiches', match: 88 }
-                ];
-
-                return (
-                    <div className="min-h-screen bg-sand-50 pb-28">
-                        <div className="p-6 max-w-2xl mx-auto">
-                            <div className="flex items-center gap-4 mb-6 pt-4">
-                                <button
-                                    onClick={() => navigateTo('home')}
-                                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
+            // Restaurant List Screen
+            const RestaurantsScreen = () => (
+                <div className="min-h-screen bg-aesop-cream pb-24">
+                    <div className="max-w-2xl mx-auto">
+                        {/* Header */}
+                        <div className="bg-white border-b border-aesop-sand p-8">
+                            <div className="flex items-center gap-5 mb-6">
+                                <button 
+                                    onClick={() => setCurrentScreen('home')}
+                                    className="text-aesop-charcoal hover:text-aesop-black"
                                 >
                                     <ChevronLeft />
                                 </button>
-                                <h2 className="text-2xl font-serif font-light text-charcoal-700 tracking-wide">Discover</h2>
+                                <div className="flex-1">
+                                    <h1 className="text-2xl font-serif text-aesop-black tracking-tight mb-1">
+                                        Restaurants
+                                    </h1>
+                                    <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                        {location ? location.city : 'Your Area'}
+                                    </p>
+                                </div>
                             </div>
                             
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search restaurants"
-                                className="w-full px-5 py-4 border border-sand-200 rounded-full mb-8 focus:outline-none focus:border-charcoal-400 bg-white text-sm font-light placeholder-charcoal-300"
-                            />
-                            
-                            <h3 className="text-sm font-light text-charcoal-600 mb-4 tracking-wide uppercase">Top Matches</h3>
-                            
-                            <div className="space-y-3">
-                                {restaurants.map((restaurant, idx) => (
-                                    <div
-                                        key={idx}
-                                        onClick={() => navigateTo('restaurant')}
-                                        className="bg-white rounded-2xl p-5 cursor-pointer hover:bg-sand-50 border border-sand-200 transition-all"
-                                    >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h4 className="font-light text-charcoal-700">{restaurant.name}</h4>
-                                            <div className="bg-sage-100 text-sage-600 px-3 py-1 rounded-full text-xs font-light">
-                                                {restaurant.match}% match
-                                            </div>
-                                        </div>
-                                        <div className="text-sm text-charcoal-400 font-light">{restaurant.cuisine}</div>
-                                    </div>
-                                ))}
+                            {/* Search Bar */}
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    placeholder="Search restaurants or dishes..."
+                                    className="w-full pl-12 pr-4 py-4 bg-aesop-cream border border-aesop-sand text-xs focus:outline-none focus:border-aesop-charcoal tracking-wide"
+                                    style={{ letterSpacing: '0.5px' }}
+                                />
+                                <div className="absolute left-4 top-4 text-aesop-taupe">
+                                    <Search />
+                                </div>
                             </div>
                         </div>
-                        
-                        <BottomNav current="discover" onNavigate={navigateTo} />
-                    </div>
-                );
-            };
 
-            // Restaurant Screen
+                        {/* Restaurant List */}
+                        <div className="p-8 space-y-4">
+                            {Object.keys(RESTAURANT_MENUS).map(restName => {
+                                const restaurant = RESTAURANT_MENUS[restName];
+                                const matchScore = Math.floor(Math.random() * 20) + 80;
+                                
+                                return (
+                                    <div
+                                        key={restName}
+                                        onClick={() => {
+                                            setSelectedRestaurant({ name: restName, ...restaurant });
+                                            setCurrentScreen('restaurant');
+                                        }}
+                                        className="bg-white border border-aesop-sand p-6 hover:border-aesop-charcoal transition-all cursor-pointer"
+                                    >
+                                        <div className="flex items-start gap-5">
+                                            <div className="w-20 h-20 border border-aesop-sand flex items-center justify-center flex-shrink-0">
+                                                <Utensils />
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-start justify-between mb-3">
+                                                    <div>
+                                                        <h3 className="text-xs tracking-widest uppercase text-aesop-black mb-2" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                            {restName}
+                                                        </h3>
+                                                        <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                            {restaurant.cuisine}
+                                                        </p>
+                                                    </div>
+                                                    <ChevronRight />
+                                                </div>
+                                                <p className="text-xs text-aesop-brown mb-4 tracking-wide leading-relaxed" style={{ letterSpacing: '0.3px' }}>
+                                                    {restaurant.description}
+                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="px-3 py-2 border border-aesop-stone">
+                                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                            {matchScore}% Match
+                                                        </span>
+                                                    </div>
+                                                    <div className="px-3 py-2 border border-aesop-stone">
+                                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                            {restaurant.items.length} Options
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Restaurant Detail Screen
             const RestaurantScreen = () => {
-                const [selectedMeal, setSelectedMeal] = useState(null);
-
-                const meals = [
-                    { name: 'Mediterranean Bowl', price: 12.95, calories: 520, protein: 32, recommended: true },
-                    { name: 'Grilled Salmon Salad', price: 14.95, calories: 420, protein: 38 },
-                    { name: 'Quinoa Power Bowl', price: 11.95, calories: 480, protein: 28 }
-                ];
+                if (!selectedRestaurant) return null;
 
                 return (
-                    <div className="min-h-screen bg-sand-50 pb-32">
-                        <div className="p-6 max-w-2xl mx-auto">
-                            <div className="flex items-center gap-4 mb-6 pt-4">
-                                <button
-                                    onClick={() => navigateTo('discover')}
-                                    className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
-                                >
-                                    <ChevronLeft />
-                                </button>
-                                <div>
-                                    <h2 className="text-xl font-serif font-light text-charcoal-700 tracking-wide">Sweetgreen</h2>
-                                    <div className="text-sm text-charcoal-400 font-light">95% match</div>
-                                </div>
-                            </div>
-                            
-                            <div className="bg-sage-50 rounded-2xl p-4 mb-6 border border-sage-100">
-                                <div className="text-xs text-sage-600 font-light leading-relaxed">
-                                    High protein, anti-inflammatory ingredients, blood sugar friendly
-                                </div>
-                            </div>
-                            
-                            <h3 className="text-sm font-light text-charcoal-600 mb-4 tracking-wide uppercase">Recommended</h3>
-                            
-                            <div className="space-y-3">
-                                {meals.map((meal, idx) => (
-                                    <div
-                                        key={idx}
-                                        onClick={() => setSelectedMeal(meal)}
-                                        className={`bg-white rounded-2xl p-5 cursor-pointer transition-all border ${
-                                            selectedMeal?.name === meal.name 
-                                                ? 'border-charcoal-600' 
-                                                : 'border-sand-200 hover:border-sand-300'
-                                        }`}
+                    <div className="min-h-screen bg-aesop-cream pb-32">
+                        <div className="max-w-2xl mx-auto">
+                            {/* Header */}
+                            <div className="bg-white border-b border-aesop-sand p-8">
+                                <div className="flex items-center gap-5 mb-4">
+                                    <button 
+                                        onClick={() => {
+                                            setSelectedRestaurant(null);
+                                            setSelectedMeal(null);
+                                            setCurrentScreen('restaurants');
+                                        }}
+                                        className="text-aesop-charcoal hover:text-aesop-black"
                                     >
-                                        <div className="flex justify-between mb-3">
-                                            <h4 className="font-light text-charcoal-700">{meal.name}</h4>
-                                            <div className="font-light text-charcoal-700">${meal.price}</div>
-                                        </div>
-                                        
-                                        <div className="flex gap-4 text-xs text-charcoal-400 font-light mb-3">
-                                            <span>{meal.calories} cal</span>
-                                            <span>·</span>
-                                            <span>{meal.protein}g protein</span>
-                                        </div>
-                                        
-                                        {meal.recommended && (
-                                            <div className="bg-sand-50 rounded-xl px-3 py-2 text-xs text-charcoal-500 font-light border border-sand-100">
-                                                Best for your luteal phase—balanced carbs & protein
-                                            </div>
-                                        )}
+                                        <ChevronLeft />
+                                    </button>
+                                    <div className="flex-1">
+                                        <h1 className="text-2xl font-serif text-aesop-black tracking-tight mb-1">
+                                            {selectedRestaurant.name}
+                                        </h1>
+                                        <p className="text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                            {selectedRestaurant.cuisine}
+                                        </p>
                                     </div>
-                                ))}
+                                </div>
+                            </div>
+
+                            {/* Menu Items */}
+                            <div className="p-8">
+                                <h2 className="text-sm tracking-widest uppercase text-aesop-black mb-6" style={{ letterSpacing: '2px', fontWeight: '600' }}>
+                                    Menu
+                                </h2>
+                                
+                                <div className="space-y-4">
+                                    {selectedRestaurant.items.map((meal, idx) => (
+                                        <div key={idx} className="bg-white border border-aesop-sand overflow-hidden">
+                                            <div className="p-6">
+                                                <div 
+                                                    onClick={() => {
+                                                        setSelectedMeal(meal);
+                                                        setExpandedMeal(expandedMeal === meal.name ? null : meal.name);
+                                                    }}
+                                                    className="cursor-pointer"
+                                                >
+                                                    <div className="flex items-start gap-5 mb-5">
+                                                        <div className="w-16 h-16 border border-aesop-sand flex-shrink-0 flex items-center justify-center">
+                                                            <Utensils />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="flex items-start justify-between mb-3">
+                                                                <h3 className="text-xs tracking-widest uppercase text-aesop-black" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                                    {meal.name}
+                                                                </h3>
+                                                                <span className="text-sm font-serif text-aesop-black">
+                                                                    ${meal.price.toFixed(2)}
+                                                                </span>
+                                                            </div>
+                                                            {meal.recommended && (
+                                                                <div className="inline-flex items-center gap-1 px-3 py-1 border border-aesop-stone mb-3">
+                                                                    <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                        Recommended
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                            <div className="flex items-center gap-3 text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                                <span>{meal.calories} cal</span>
+                                                                <span>·</span>
+                                                                <span>{meal.protein}g protein</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Macros */}
+                                                    <div className="grid grid-cols-4 gap-4 mb-5">
+                                                        <div className="text-center p-3 border border-aesop-sand">
+                                                            <div className="text-sm font-serif text-aesop-black mb-1">
+                                                                {meal.calories}
+                                                            </div>
+                                                            <div className="text-xs text-aesop-taupe tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                cal
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-center p-3 border border-aesop-sand">
+                                                            <div className="text-sm font-serif text-aesop-black mb-1">
+                                                                {meal.protein}g
+                                                            </div>
+                                                            <div className="text-xs text-aesop-taupe tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                protein
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-center p-3 border border-aesop-sand">
+                                                            <div className="text-sm font-serif text-aesop-black mb-1">
+                                                                {meal.carbs}g
+                                                            </div>
+                                                            <div className="text-xs text-aesop-taupe tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                carbs
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-center p-3 border border-aesop-sand">
+                                                            <div className="text-sm font-serif text-aesop-black mb-1">
+                                                                {meal.fat}g
+                                                            </div>
+                                                            <div className="text-xs text-aesop-taupe tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                                                fat
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Expanded Details */}
+                                                {expandedMeal === meal.name && (
+                                                    <div className="pt-6 border-t border-aesop-sand space-y-6">
+                                                        {/* Ingredients */}
+                                                        <div>
+                                                            <div className="text-xs text-aesop-charcoal mb-3 uppercase tracking-widest" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                                Ingredients
+                                                            </div>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {meal.ingredients.map((ing, idx) => (
+                                                                    <span key={idx} className="ingredient-tag">
+                                                                        {ing}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Allergens */}
+                                                        {meal.allergens && meal.allergens.length > 0 && (
+                                                            <div>
+                                                                <div className="text-xs text-aesop-charcoal mb-3 uppercase tracking-widest" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                                    Allergens
+                                                                </div>
+                                                                <div className="text-xs text-aesop-brown bg-aesop-sand border border-aesop-stone px-4 py-3 tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                                                    Contains: {meal.allergens.join(', ')}
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Health Score */}
+                                                        <div className="bg-aesop-sand border border-aesop-stone px-5 py-4">
+                                                            <div className="flex items-center justify-between mb-3">
+                                                                <span className="text-xs text-aesop-charcoal uppercase tracking-widest" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                                    Health Score
+                                                                </span>
+                                                                <span className="text-lg font-serif text-aesop-black">
+                                                                    {meal.healthScore}/100
+                                                                </span>
+                                                            </div>
+                                                            <div className="h-px bg-aesop-stone overflow-hidden">
+                                                                <div 
+                                                                    className="h-full bg-accent-olive" 
+                                                                    style={{ width: `${meal.healthScore}%` }}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Action Buttons */}
+                                                        <div className="grid grid-cols-2 gap-3 pt-2">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setTrackedMeals([...trackedMeals, meal]);
+                                                                    alert('Meal logged successfully');
+                                                                }}
+                                                                className="py-4 border border-aesop-charcoal text-aesop-black text-xs uppercase tracking-widest hover:bg-aesop-black hover:text-white transition-all"
+                                                                style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                                                            >
+                                                                Log Meal
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    openDoorDash(selectedRestaurant.name, meal.name);
+                                                                }}
+                                                                className="py-4 bg-aesop-black text-white text-xs uppercase tracking-widest hover:bg-aesop-charcoal transition-all"
+                                                                style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                                                            >
+                                                                Order
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
-                        
-                        {selectedMeal && (
-                            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-sand-200 p-6">
-                                <div className="max-w-2xl mx-auto">
-                                    <button
-                                        onClick={() => navigateTo('tracking')}
-                                        className="w-full bg-charcoal-600 text-white py-4 rounded-full font-light tracking-wide hover:bg-charcoal-700"
-                                    >
-                                        Order on DoorDash · ${selectedMeal.price}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 );
             };
 
-            // Tracking Screen
-            const TrackingScreen = () => (
-                <div className="min-h-screen bg-sand-50 pb-28">
-                    <div className="p-6 max-w-2xl mx-auto">
-                        <div className="flex items-center gap-4 mb-6 pt-4">
-                            <button
-                                onClick={() => navigateTo('home')}
-                                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
-                            >
-                                <ChevronLeft />
-                            </button>
-                            <h2 className="text-2xl font-serif font-light text-charcoal-700 tracking-wide">Today</h2>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-6 border border-sand-200">
-                            <h3 className="text-lg font-serif font-light text-charcoal-700 mb-6 tracking-wide">Macros</h3>
-                            
-                            <div className="space-y-6">
-                                <div>
-                                    <div className="flex justify-between mb-2 text-sm">
-                                        <span className="text-charcoal-400 font-light">Calories</span>
-                                        <span className="text-charcoal-600 font-light">1250 / 1850</span>
-                                    </div>
-                                    <div className="h-1 bg-sand-100 rounded-full overflow-hidden">
-                                        <div className="h-full bg-clay-400 rounded-full" style={{ width: '68%' }}></div>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <div className="flex justify-between mb-2 text-sm">
-                                        <span className="text-charcoal-400 font-light">Protein</span>
-                                        <span className="text-charcoal-600 font-light">75g / 120g</span>
-                                    </div>
-                                    <div className="h-1 bg-sand-100 rounded-full overflow-hidden">
-                                        <div className="h-full bg-sage-400 rounded-full" style={{ width: '62%' }}></div>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <div className="flex justify-between mb-2 text-sm">
-                                        <span className="text-charcoal-400 font-light">Carbs</span>
-                                        <span className="text-charcoal-600 font-light">110g / 180g</span>
-                                    </div>
-                                    <div className="h-1 bg-sand-100 rounded-full overflow-hidden">
-                                        <div className="h-full bg-sand-500 rounded-full" style={{ width: '61%' }}></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-6 border border-sand-200">
-                            <h3 className="text-lg font-serif font-light text-charcoal-700 mb-4 tracking-wide">Meals</h3>
-                            
-                            <div className="border-b border-sand-100 pb-4 mb-4">
-                                <div className="flex justify-between mb-1">
-                                    <div className="font-light text-charcoal-600">Mediterranean Bowl</div>
-                                    <div className="text-sm text-charcoal-400 font-light">520 cal</div>
-                                </div>
-                                <div className="text-sm text-charcoal-400 font-light">Lunch</div>
-                            </div>
-                            
-                            <button className="w-full py-3 bg-sand-50 text-charcoal-500 border border-sand-200 rounded-full font-light text-sm hover:bg-sand-100">
-                                Log a meal
-                            </button>
-                        </div>
-                        
-                        <div className="bg-sage-50 rounded-2xl p-5 border border-sage-100">
-                            <div className="text-xs text-sage-600 font-light leading-relaxed">
-                                You're on track with your protein goals and staying within your calorie target
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <BottomNav current="track" onNavigate={navigateTo} />
-                </div>
-            );
+            // Track Screen
+            const TrackScreen = () => (
+                <div className="min-h-screen bg-aesop-cream pb-24">
+                    <div className="max-w-2xl mx-auto p-8">
+                        <h1 className="text-3xl font-serif text-aesop-black mb-2 tracking-tight">Track</h1>
+                        <p className="text-xs text-aesop-taupe tracking-wide mb-8" style={{ letterSpacing: '0.5px' }}>
+                            Daily nutrition overview
+                        </p>
 
-            // Insights Screen
-            const InsightsScreen = () => (
-                <div className="min-h-screen bg-sand-50 pb-28">
-                    <div className="p-6 max-w-2xl mx-auto">
-                        <div className="flex items-center gap-4 mb-6 pt-4">
-                            <button
-                                onClick={() => navigateTo('home')}
-                                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
-                            >
-                                <ChevronLeft />
-                            </button>
-                            <h2 className="text-2xl font-serif font-light text-charcoal-700 tracking-wide">Insights</h2>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-4 border border-sand-200">
-                            <h3 className="font-serif font-light text-charcoal-700 mb-6 text-lg tracking-wide">This Week</h3>
+                        {/* Daily Progress */}
+                        <div className="bg-white border border-aesop-sand p-8 mb-8">
+                            <h2 className="text-sm tracking-widest uppercase text-aesop-black mb-6" style={{ letterSpacing: '2px', fontWeight: '600' }}>
+                                Today's Progress
+                            </h2>
                             
-                            <div className="mb-6">
-                                <div className="text-sm text-charcoal-400 font-light mb-2 uppercase tracking-wider">Average Daily</div>
-                                <div className="text-4xl font-serif font-light text-charcoal-700">1,720 cal</div>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-5">
+                                {/* Calories */}
                                 <div>
-                                    <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">Protein</div>
-                                    <div className="text-2xl font-serif font-light text-sage-500">105g</div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-charcoal-400 font-light mb-2 uppercase tracking-wider">Meals</div>
-                                    <div className="text-2xl font-serif font-light text-clay-500">18 / 21</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-4 border border-sand-200">
-                            <h3 className="font-serif font-light text-charcoal-700 mb-4 text-lg tracking-wide">Cycle</h3>
-                            
-                            <div className="bg-sand-50 rounded-2xl p-4 mb-3 border border-sand-100">
-                                <div className="text-sm font-light text-charcoal-600 mb-2">Luteal Phase · Day 23</div>
-                                <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                    Focus on complex carbs—sweet potatoes, quinoa, and oats
-                                </div>
-                            </div>
-                            
-                            <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                Based on your Oura data, eating dinner before 7pm improves your sleep quality during this phase
-                            </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 border border-sand-200">
-                            <h3 className="font-serif font-light text-charcoal-700 mb-4 text-lg tracking-wide">Favorites</h3>
-                            
-                            <div className="space-y-4">
-                                {[
-                                    { name: 'Sweetgreen', orders: '8 orders' },
-                                    { name: 'Cava', orders: '5 orders' },
-                                    { name: 'True Food Kitchen', orders: '3 orders' }
-                                ].map((restaurant, idx) => (
-                                    <div key={idx} className="flex justify-between items-center">
-                                        <div>
-                                            <div className="font-light text-charcoal-600 text-sm">{restaurant.name}</div>
-                                            <div className="text-xs text-charcoal-400 font-light">{restaurant.orders}</div>
-                                        </div>
-                                        <div className="w-1 h-1 rounded-full bg-sand-300"></div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                            Calories
+                                        </span>
+                                        <span className="text-xs font-serif text-aesop-black">
+                                            {dailyStats.calories} / {dailyStats.target.calories}
+                                        </span>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <BottomNav current="insights" onNavigate={navigateTo} />
-                </div>
-            );
+                                    <div className="h-px bg-aesop-sand overflow-hidden">
+                                        <div 
+                                            className="h-full bg-aesop-charcoal transition-all"
+                                            style={{ width: `${Math.min((dailyStats.calories / dailyStats.target.calories) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
 
-            // Settings Screen
-            const SettingsScreen = () => (
-                <div className="min-h-screen bg-sand-50 pb-28">
-                    <div className="p-6 max-w-2xl mx-auto">
-                        <div className="flex items-center gap-4 mb-6 pt-4">
-                            <button
-                                onClick={() => navigateTo('home')}
-                                className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-sand-100 border border-sand-200"
-                            >
-                                <ChevronLeft />
-                            </button>
-                            <h2 className="text-2xl font-serif font-light text-charcoal-700 tracking-wide">Settings</h2>
-                        </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-4 border border-sand-200">
-                            <h3 className="font-light text-charcoal-600 mb-4 text-sm tracking-wide uppercase">Devices</h3>
-                            
-                            <div className="bg-sand-100 rounded-2xl p-4 mb-3 border border-sand-200">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
-                                            <circle cx="20" cy="20" r="15" stroke="#9D7760" strokeWidth="1.5"/>
-                                            <circle cx="20" cy="20" r="10" stroke="#9D7760" strokeWidth="1.5"/>
-                                        </svg>
-                                        <div>
-                                            <div className="font-light text-charcoal-700 text-sm">Oura Ring</div>
-                                            <div className="text-xs text-charcoal-400 font-light">Connected</div>
-                                        </div>
+                                {/* Protein */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                            Protein
+                                        </span>
+                                        <span className="text-xs font-serif text-aesop-black">
+                                            {dailyStats.protein}g / {dailyStats.target.protein}g
+                                        </span>
                                     </div>
-                                    <div className="text-sage-500 text-sm">✓</div>
+                                    <div className="h-px bg-aesop-sand overflow-hidden">
+                                        <div 
+                                            className="h-full bg-accent-olive transition-all"
+                                            style={{ width: `${Math.min((dailyStats.protein / dailyStats.target.protein) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Carbs */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                            Carbs
+                                        </span>
+                                        <span className="text-xs font-serif text-aesop-black">
+                                            {dailyStats.carbs}g / {dailyStats.target.carbs}g
+                                        </span>
+                                    </div>
+                                    <div className="h-px bg-aesop-sand overflow-hidden">
+                                        <div 
+                                            className="h-full bg-aesop-taupe transition-all"
+                                            style={{ width: `${Math.min((dailyStats.carbs / dailyStats.target.carbs) * 100, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Fat */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                            Fat
+                                        </span>
+                                        <span className="text-xs font-serif text-aesop-black">
+                                            {dailyStats.fat}g / {dailyStats.target.fat}g
+                                        </span>
+                                    </div>
+                                    <div className="h-px bg-aesop-sand overflow-hidden">
+                                        <div 
+                                            className="h-full bg-aesop-charcoal transition-all"
+                                            style={{ width: `${Math.min((dailyStats.fat / dailyStats.target.fat) * 100, 100)}%` }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Logged Meals */}
+                        <div className="mb-8">
+                            <h2 className="text-sm tracking-widest uppercase text-aesop-black mb-6" style={{ letterSpacing: '2px', fontWeight: '600' }}>
+                                Logged Meals
+                            </h2>
                             
-                            <div className="bg-white rounded-2xl p-4 mb-3 border border-dashed border-sand-200">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-sand-100 rounded-full"></div>
-                                        <div>
-                                            <div className="font-light text-charcoal-700 text-sm">Apple Health</div>
-                                            <div className="text-xs text-charcoal-400 font-light">Not connected</div>
-                                        </div>
+                            {trackedMeals.length === 0 ? (
+                                <div className="bg-white border border-aesop-sand p-12 text-center">
+                                    <div className="mb-4">
+                                        <Utensils />
                                     </div>
-                                    <button className="px-4 py-2 bg-charcoal-600 text-white rounded-full text-xs font-light hover:bg-charcoal-700">
-                                        Connect
+                                    <p className="text-xs text-aesop-taupe tracking-wide mb-6" style={{ letterSpacing: '0.5px' }}>
+                                        No meals logged today
+                                    </p>
+                                    <button
+                                        onClick={() => setCurrentScreen('restaurants')}
+                                        className="px-8 py-3 bg-aesop-black text-white text-xs uppercase tracking-widest hover:bg-aesop-charcoal"
+                                        style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                                    >
+                                        Browse Restaurants
                                     </button>
                                 </div>
-                            </div>
-                            
-                            <div className="bg-white rounded-2xl p-4 border border-dashed border-sand-200">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-sand-100 rounded-full"></div>
-                                        <div>
-                                            <div className="font-light text-charcoal-700 text-sm">Whoop</div>
-                                            <div className="text-xs text-charcoal-400 font-light">Not connected</div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {trackedMeals.map((meal, idx) => (
+                                        <div key={idx} className="bg-white border border-aesop-sand p-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-12 h-12 border border-aesop-sand flex items-center justify-center flex-shrink-0">
+                                                    <Utensils />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="text-xs tracking-widest uppercase text-aesop-black mb-2" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                                        {meal.name}
+                                                    </h3>
+                                                    <div className="flex items-center gap-2 text-xs text-aesop-taupe tracking-wide" style={{ letterSpacing: '0.5px' }}>
+                                                        <span>{meal.calories} cal</span>
+                                                        <span>·</span>
+                                                        <span>{meal.protein}g protein</span>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        setTrackedMeals(trackedMeals.filter((_, i) => i !== idx));
+                                                    }}
+                                                    className="text-aesop-taupe hover:text-aesop-black"
+                                                >
+                                                    <X />
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <button className="px-4 py-2 bg-charcoal-600 text-white rounded-full text-xs font-light hover:bg-charcoal-700">
-                                        Connect
-                                    </button>
+                                    ))}
                                 </div>
-                            </div>
+                            )}
                         </div>
-                        
-                        <div className="bg-white rounded-3xl p-6 mb-4 border border-sand-200">
-                            <h3 className="font-light text-charcoal-600 mb-4 text-sm tracking-wide uppercase">Oura Data</h3>
-                            
-                            <div className="space-y-4 mb-6">
-                                <div className="flex items-start gap-3">
-                                    <div className="text-clay-400 text-sm mt-0.5">—</div>
-                                    <div>
-                                        <div className="text-charcoal-600 text-sm font-light mb-1">Sleep Quality</div>
-                                        <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                            Optimize meal timing based on rest
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex items-start gap-3">
-                                    <div className="text-sage-400 text-sm mt-0.5">—</div>
-                                    <div>
-                                        <div className="text-charcoal-600 text-sm font-light mb-1">Readiness & HRV</div>
-                                        <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                            Adjust nutrition when recovery is needed
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="flex items-start gap-3">
-                                    <div className="text-sand-500 text-sm mt-0.5">—</div>
-                                    <div>
-                                        <div className="text-charcoal-600 text-sm font-light mb-1">Menstrual Cycle</div>
-                                        <div className="text-xs text-charcoal-400 font-light leading-relaxed">
-                                            Sync to hormonal phases
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-sage-50 rounded-2xl p-5 mb-6 border border-sage-100">
-                            <div className="text-xs text-sage-600 font-light leading-relaxed">
-                                Your data is encrypted and private. We never share your information with third parties.
-                            </div>
-                        </div>
-                        
-                        <button className="w-full py-3 bg-white border border-clay-300 text-clay-500 rounded-full font-light text-sm hover:bg-clay-50">
-                            Disconnect Oura Ring
+
+                        {/* Quick Add Button */}
+                        <button
+                            onClick={() => setCurrentScreen('restaurants')}
+                            className="w-full py-4 bg-aesop-black text-white text-xs uppercase tracking-widest hover:bg-aesop-charcoal flex items-center justify-center gap-3"
+                            style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                        >
+                            <Plus />
+                            <span>Add Meal</span>
                         </button>
                     </div>
                 </div>
             );
 
-            // Bottom Navigation Component
+            // Insights Screen
+            const InsightsScreen = () => (
+                <div className="min-h-screen bg-aesop-cream pb-24">
+                    <div className="max-w-2xl mx-auto p-8">
+                        <h1 className="text-3xl font-serif text-aesop-black mb-2 tracking-tight">Insights</h1>
+                        <p className="text-xs text-aesop-taupe tracking-wide mb-8" style={{ letterSpacing: '0.5px' }}>
+                            Personalized recommendations based on your health data
+                        </p>
+
+                        <div className="space-y-4">
+                            {/* Cycle Insight */}
+                            <div className="bg-white border border-aesop-sand p-8">
+                                <div className="flex items-start gap-4 mb-5">
+                                    <div className="flex-shrink-0">
+                                        <Calendar />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm tracking-widest uppercase text-aesop-black mb-3" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Cycle-Synced Nutrition
+                                        </h3>
+                                        <p className="text-xs text-aesop-brown leading-relaxed tracking-wide mb-4" style={{ letterSpacing: '0.3px' }}>
+                                            You are in your follicular phase (Day 8). Your body demonstrates increased 
+                                            insulin sensitivity and naturally elevated energy levels. Optimal period for:
+                                        </p>
+                                        <ul className="space-y-2 text-xs text-aesop-brown tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                            <li className="flex items-start gap-3">
+                                                <span className="text-aesop-charcoal mt-0.5">·</span>
+                                                <span>Lean proteins and complex carbohydrates</span>
+                                            </li>
+                                            <li className="flex items-start gap-3">
+                                                <span className="text-aesop-charcoal mt-0.5">·</span>
+                                                <span>Higher-intensity physical training</span>
+                                            </li>
+                                            <li className="flex items-start gap-3">
+                                                <span className="text-aesop-charcoal mt-0.5">·</span>
+                                                <span>Increased portion sizes if required</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs">
+                                    <span className="px-3 py-2 border border-aesop-stone text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px', fontSize: '9px' }}>
+                                        Follicular Phase
+                                    </span>
+                                    <span className="px-3 py-2 border border-aesop-stone text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px', fontSize: '9px' }}>
+                                        Day 8/28
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Sleep Insight */}
+                            <div className="bg-white border border-aesop-sand p-8">
+                                <div className="flex items-start gap-4 mb-5">
+                                    <div className="flex-shrink-0">
+                                        <Activity />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm tracking-widest uppercase text-aesop-black mb-3" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Sleep & Recovery
+                                        </h3>
+                                        <p className="text-xs text-aesop-brown leading-relaxed tracking-wide mb-4" style={{ letterSpacing: '0.3px' }}>
+                                            Sleep score: 82. Recovery is optimal. Your body is prepared for 
+                                            balanced nutritional intake throughout the day.
+                                        </p>
+                                        <div className="bg-aesop-sand border border-aesop-stone p-4">
+                                            <p className="text-xs text-aesop-brown tracking-wide leading-relaxed" style={{ letterSpacing: '0.3px' }}>
+                                                Consider a protein-rich meal within one hour of waking to stabilize 
+                                                blood glucose and maintain optimal energy levels.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* HRV Insight */}
+                            <div className="bg-white border border-aesop-sand p-8">
+                                <div className="flex items-start gap-4 mb-5">
+                                    <div className="flex-shrink-0">
+                                        <TrendingUp />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm tracking-widest uppercase text-aesop-black mb-3" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Recovery Status
+                                        </h3>
+                                        <p className="text-xs text-aesop-brown leading-relaxed tracking-wide mb-4" style={{ letterSpacing: '0.3px' }}>
+                                            Readiness: 85%. HRV: 68ms. Your body is in optimal recovery mode.
+                                        </p>
+                                        <div className="space-y-2 text-xs text-aesop-brown tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                            <div className="flex items-start gap-3">
+                                                <span className="text-accent-olive mt-0.5">✓</span>
+                                                <span>Body can accommodate normal training intensity</span>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <span className="text-accent-olive mt-0.5">✓</span>
+                                                <span>Maintain regular macronutrient targets</span>
+                                            </div>
+                                            <div className="flex items-start gap-3">
+                                                <span className="text-accent-olive mt-0.5">✓</span>
+                                                <span>Post-workout: 20-30g protein within two hours</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Weekly Trend */}
+                            <div className="bg-white border border-aesop-sand p-8">
+                                <div className="flex items-start gap-4 mb-5">
+                                    <div className="flex-shrink-0">
+                                        <BarChart />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm tracking-widest uppercase text-aesop-black mb-5" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Weekly Trends
+                                        </h3>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                                        Average Calories
+                                                    </span>
+                                                    <span className="text-xs font-serif text-aesop-black">
+                                                        1,650 / day
+                                                    </span>
+                                                </div>
+                                                <div className="text-xs text-accent-olive tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                                    ↑ 5% from last week
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <span className="text-xs text-aesop-charcoal tracking-widest uppercase" style={{ letterSpacing: '1px' }}>
+                                                        Average Protein
+                                                    </span>
+                                                    <span className="text-xs font-serif text-aesop-black">
+                                                        102g / day
+                                                    </span>
+                                                </div>
+                                                <div className="text-xs text-aesop-brown tracking-wide" style={{ letterSpacing: '0.3px' }}>
+                                                    ↓ 8% — Consider slight increase
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Recommendation */}
+                            <div className="bg-aesop-sand border border-aesop-stone p-8">
+                                <div className="flex items-start gap-4">
+                                    <div className="flex-shrink-0">
+                                        <Sparkles />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-sm tracking-widest uppercase text-aesop-black mb-3" style={{ letterSpacing: '1.5px', fontWeight: '600' }}>
+                                            Recommendation
+                                        </h3>
+                                        <p className="text-xs text-aesop-brown leading-relaxed tracking-wide mb-5" style={{ letterSpacing: '0.3px' }}>
+                                            Based on your follicular phase and optimal recovery status, the 
+                                            Harvest Bowl from Sweetgreen is recommended for today's lunch. 
+                                            Provides balanced protein (18g) and complex carbohydrates (68g) 
+                                            to support elevated energy levels.
+                                        </p>
+                                        <button
+                                            onClick={() => setCurrentScreen('restaurants')}
+                                            className="px-6 py-3 bg-aesop-black text-white text-xs uppercase tracking-widest hover:bg-aesop-charcoal"
+                                            style={{ letterSpacing: '1.5px', fontWeight: '500' }}
+                                        >
+                                            View Recommendation
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Bottom Navigation
             const BottomNav = ({ current, onNavigate }) => (
-                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-sand-200">
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-aesop-sand z-50">
                     <div className="max-w-2xl mx-auto">
-                        <div className="grid grid-cols-4 gap-2 p-5">
+                        <div className="grid grid-cols-4 gap-2 p-6">
                             <button
                                 onClick={() => onNavigate('home')}
-                                className={`flex flex-col items-center gap-1.5 ${
-                                    current === 'home' ? 'text-charcoal-700' : 'text-charcoal-300'
+                                className={`flex flex-col items-center gap-2 transition-colors ${
+                                    current === 'home' ? 'text-aesop-black' : 'text-aesop-taupe'
                                 }`}
                             >
                                 <Home />
-                                <span className="text-xs font-light">Home</span>
+                                <span className="text-xs tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                    Home
+                                </span>
                             </button>
                             <button
-                                onClick={() => onNavigate('discover')}
-                                className={`flex flex-col items-center gap-1.5 ${
-                                    current === 'discover' ? 'text-charcoal-700' : 'text-charcoal-300'
+                                onClick={() => onNavigate('restaurants')}
+                                className={`flex flex-col items-center gap-2 transition-colors ${
+                                    current === 'restaurants' ? 'text-aesop-black' : 'text-aesop-taupe'
                                 }`}
                             >
                                 <Search />
-                                <span className="text-xs font-light">Discover</span>
+                                <span className="text-xs tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                    Browse
+                                </span>
                             </button>
                             <button
-                                onClick={() => onNavigate('tracking')}
-                                className={`flex flex-col items-center gap-1.5 ${
-                                    current === 'track' ? 'text-charcoal-700' : 'text-charcoal-300'
+                                onClick={() => onNavigate('track')}
+                                className={`flex flex-col items-center gap-2 transition-colors ${
+                                    current === 'track' ? 'text-aesop-black' : 'text-aesop-taupe'
                                 }`}
                             >
                                 <BarChart />
-                                <span className="text-xs font-light">Track</span>
+                                <span className="text-xs tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                    Track
+                                </span>
                             </button>
                             <button
                                 onClick={() => onNavigate('insights')}
-                                className={`flex flex-col items-center gap-1.5 ${
-                                    current === 'insights' ? 'text-charcoal-700' : 'text-charcoal-300'
+                                className={`flex flex-col items-center gap-2 transition-colors ${
+                                    current === 'insights' ? 'text-aesop-black' : 'text-aesop-taupe'
                                 }`}
                             >
                                 <Sparkles />
-                                <span className="text-xs font-light">Insights</span>
+                                <span className="text-xs tracking-widest uppercase" style={{ letterSpacing: '0.5px', fontSize: '9px' }}>
+                                    Insights
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -1216,29 +1711,31 @@
             // Main Router
             const screens = {
                 splash: <SplashScreen />,
-                welcome: <WelcomeScreen />,
-                onboarding1: <Onboarding1 />,
-                oura: <OuraOnboarding />,
-                onboarding2: <Onboarding2 />,
-                onboarding3: <Onboarding3 />,
-                loading: <LoadingScreen />,
+                onboarding: <OnboardingScreen />,
+                wearable: <WearableScreen />,
                 home: <HomeScreen />,
-                discover: <DiscoverScreen />,
+                restaurants: <RestaurantsScreen />,
                 restaurant: <RestaurantScreen />,
-                tracking: <TrackingScreen />,
-                insights: <InsightsScreen />,
-                settings: <SettingsScreen />
+                track: <TrackScreen />,
+                insights: <InsightsScreen />
             };
 
+            const showBottomNav = ['home', 'restaurants', 'track', 'insights'].includes(currentScreen);
+
             return (
-                <div className="min-h-screen bg-sand-50">
+                <div className="min-h-screen bg-aesop-cream">
                     {screens[currentScreen]}
+                    {showBottomNav && (
+                        <BottomNav 
+                            current={currentScreen} 
+                            onNavigate={setCurrentScreen}
+                        />
+                    )}
                 </div>
             );
         }
 
-        // Render the app
-        ReactDOM.render(<CirceHealthApp />, document.getElementById('root'));
+        ReactDOM.render(<CirceNutritionApp />, document.getElementById('root'));
     </script>
 </body>
 </html>
